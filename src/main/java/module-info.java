@@ -9,4 +9,7 @@ module socialnetwork {
 
     opens socialnetwork to javafx.fxml;
     exports socialnetwork;
+
+    opens socialnetwork.controller to javafx.fxml;
+    exports socialnetwork.controller;
 }
