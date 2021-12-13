@@ -59,6 +59,10 @@ public class UserDTO extends Entity<String> {
         return fullName;
     }
 
+    public String getFullNameRev() {
+        return lastName + " " + firstName;
+    }
+
     /*
     @Override
     public String toString() {

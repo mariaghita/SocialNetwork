@@ -19,6 +19,7 @@ import socialnetwork.utils.observer.Observer;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -96,9 +97,14 @@ public class AddFriendPopupController implements Observer<FriendRequestEvent> {
     }
 
     private void handleFilter() {
+        Predicate<UserDTO> p1 = e -> e.getFullName().toLowerCase().contains(searchBar.getText().toLowerCase());
+        Predicate<UserDTO> p2 = e -> e.getFullName().toLowerCase().startsWith(searchBar.getText().toLowerCase());
+        Predicate<UserDTO> p3 = e -> e.getFullNameRev().toLowerCase().contains(searchBar.getText().toLowerCase());
+        Predicate<UserDTO> p4 = e -> e.getFullNameRev().toLowerCase().startsWith(searchBar.getText().toLowerCase());
+
         model.setAll(allUsers
                 .stream()
-                .filter(e -> e.getFirstName().toLowerCase().contains(searchBar.getText().toLowerCase()))
+                .filter(p1.or(p2).or(p3).or(p4))
                 .collect(Collectors.toList()));
     }
 
