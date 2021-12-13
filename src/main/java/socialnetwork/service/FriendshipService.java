@@ -157,6 +157,13 @@ public class FriendshipService implements Observable<FriendshipEvent> {
             throw new ValidationException("Second user is non-existent!\n");
     }
 
+    public Friendship getOne(String username1, String username2) {
+        Tuple<String> testFriendship = new Tuple<>(username1, username2);
+        testFriendship.orderTuple();
+
+        return friendshipDBRepository.findOne(testFriendship);
+    }
+
     public Iterable<Friendship>getAll() {
         return friendshipDBRepository.findAll();
     }

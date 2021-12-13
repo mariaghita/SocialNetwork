@@ -77,8 +77,12 @@ public class FriendRequestService implements Observable<FriendRequestEvent> {
             throw new ValidationException("You are already friends with this user!\n");
 
         Tuple<String> newFriendRequest0 = new Tuple<>(username2, username1);
-        if(friendRequestDBRepository.findOne(newFriendRequest0) == null)
+        if(friendRequestDBRepository.findOne(newFriendRequest0) != null)
             throw new ValidationException("You already have a pending friend request from this user!\n");
+
+        Tuple<String> newFriendRequest1 = new Tuple<>(username1, username2);
+        if(friendRequestDBRepository.findOne(newFriendRequest1) != null)
+            throw new ValidationException("You already sent a friend request to this user! Wait for them to answer first!\n");
 
         FriendRequest newFriendRequest = new FriendRequest(username1, username2);
         Validator<FriendRequest> validator = new FriendRequestValidator();
