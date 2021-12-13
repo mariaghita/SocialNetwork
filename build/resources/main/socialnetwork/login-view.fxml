@@ -25,6 +25,7 @@
    <right>
       <AnchorPane prefHeight="400.0" prefWidth="370.0" BorderPane.alignment="CENTER">
          <children>
+            <TextField fx:id="userName" layoutX="87.0" layoutY="174.0" promptText="username" />
             <PasswordField layoutX="87.0" layoutY="236.0" promptText="password" />
             <Label layoutX="130.0" layoutY="154.0" text="Username">
                <font>
@@ -36,7 +37,6 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="userName" layoutX="87.0" layoutY="174.0" promptText="username" />
             <Button fx:id="login_button" layoutX="127.0" layoutY="296.0" mnemonicParsing="false" onAction="#userLogin" prefHeight="33.0" prefWidth="69.0" text="Login" />
             <Label fx:id="wrong_login" alignment="CENTER" layoutX="71.0" layoutY="127.0" prefHeight="18.0" prefWidth="181.0" />
             <Label layoutX="83.0" layoutY="56.0" prefHeight="36.0" prefWidth="158.0" text="Welcome to SunLit!">

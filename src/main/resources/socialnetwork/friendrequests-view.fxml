@@ -9,11 +9,11 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.FriendRequestsController">
    <left>
-      <AnchorPane prefHeight="338.0" prefWidth="181.0" style="-fx-background-color: #facb35;" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="338.0" prefWidth="181.0" style="-fx-background-color: ffe485;" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="manageFriends" layoutX="43.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchManageFriends" text="Manage Friends" />
             <Button fx:id="manageFriendRequests" layoutX="19.0" layoutY="64.0" mnemonicParsing="false" onAction="#switchManageFriendRequests" text="Manage Friend Requests" />
-            <Button layoutX="66.0" layoutY="110.0" mnemonicParsing="false" onAction="#userLogout" text="Logout" />
+            <Button layoutX="66.0" layoutY="288.0" mnemonicParsing="false" onAction="#userLogout" text="Logout" />
          </children>
       </AnchorPane>
    </left>

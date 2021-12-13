@@ -3,15 +3,20 @@ package socialnetwork.service;
 import socialnetwork.model.*;
 import socialnetwork.model.validators.*;
 import socialnetwork.repository.db.*;
+import socialnetwork.utils.events.FriendshipEventType;
+import socialnetwork.utils.events.FriendshipEvent;
+import socialnetwork.utils.observer.Observable;
+import socialnetwork.utils.observer.Observer;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class FriendshipService {
+public class FriendshipService implements Observable<FriendshipEvent> {
     private final UserDBRepository userDBRepository;
     private final FriendshipDBRepository friendshipDBRepository;
 
@@ -39,6 +44,8 @@ public class FriendshipService {
             throw new ValidationException("This friendship already exists!\n");
 
         friendshipDBRepository.save(friendship);
+        Friendship new_friendship = friendshipDBRepository.findOne(newFriendship);
+        notifyObservers(new FriendshipEvent(FriendshipEventType.ADD, new_friendship));
     }
 
     /**
@@ -49,12 +56,14 @@ public class FriendshipService {
     public void removeFriendship(String username1, String username2) {
         validateFriendship(username1, username2);
 
-        Tuple<String> newFriendship = new Tuple<>(username1, username2);
-        newFriendship.orderTuple();
-        if(friendshipDBRepository.findOne(newFriendship) == null)
+        Tuple<String> oldFriendship = new Tuple<>(username1, username2);
+        oldFriendship.orderTuple();
+        Friendship old_friendship = friendshipDBRepository.findOne(oldFriendship);
+        if(old_friendship == null)
             throw new ValidationException("This friendship doesn't exist!\n");
 
-        friendshipDBRepository.delete(newFriendship);
+        friendshipDBRepository.delete(oldFriendship);
+        notifyObservers(new FriendshipEvent(FriendshipEventType.DELETE, old_friendship));
     }
 
     /**
@@ -94,7 +103,7 @@ public class FriendshipService {
             throw new ValidationException("This is not a valid month value!");
 
         List<UserDTO> result = getFriendList(username).stream()
-                .filter(e -> e.getDateOfFriendship().getMonthValue() == m)
+                .filter(e -> e.getDateOfFriendshipAsDate().getMonthValue() == m)
                 .collect(Collectors.toList());
 
         if(result.size() == 0)
@@ -110,15 +119,15 @@ public class FriendshipService {
      * @param username the username of the user that we requested the friend list for
      * @return list of friends
      */
-    private List<UserDTO> getFriendList(String username){
+    public List<UserDTO> getFriendList(String username){
         List<UserDTO> result1 = StreamSupport.stream(getAll().spliterator(), false)
                 .filter(e -> Objects.equals(e.getId().getFirst(), username))
-                .map(e -> new UserDTO(userDBRepository.findOne(e.getId().getSecond()).getFirstName(), userDBRepository.findOne(e.getId().getSecond()).getLastName(), e.getDate()))
+                .map(e -> new UserDTO(e.getId().getSecond(), userDBRepository.findOne(e.getId().getSecond()).getFirstName(), userDBRepository.findOne(e.getId().getSecond()).getLastName(), e.getDate()))
                 .collect(Collectors.toList());
 
         List<UserDTO> result2 = StreamSupport.stream(getAll().spliterator(), false)
                 .filter(e -> Objects.equals(e.getId().getSecond(), username))
-                .map(e -> new UserDTO(userDBRepository.findOne(e.getId().getFirst()).getFirstName(), userDBRepository.findOne(e.getId().getFirst()).getLastName(), e.getDate()))
+                .map(e -> new UserDTO(e.getId().getFirst(), userDBRepository.findOne(e.getId().getFirst()).getFirstName(), userDBRepository.findOne(e.getId().getFirst()).getLastName(), e.getDate()))
                 .collect(Collectors.toList());
 
         return Stream.concat(result1.stream(), result2.stream())
@@ -150,5 +159,22 @@ public class FriendshipService {
 
     public Iterable<Friendship>getAll() {
         return friendshipDBRepository.findAll();
+    }
+
+    private List<Observer<FriendshipEvent>> observers = new ArrayList<>();
+
+    @Override
+    public void addObserver(Observer<FriendshipEvent> e) {
+        observers.add(e);
+    }
+
+    @Override
+    public void removeObserver(Observer<FriendshipEvent> e) {
+        observers.remove(e);
+    }
+
+    @Override
+    public void notifyObservers(FriendshipEvent e) {
+        observers.forEach(x -> x.update(e));
     }
 }

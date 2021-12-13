@@ -3,13 +3,18 @@ package socialnetwork.service;
 import socialnetwork.model.*;
 import socialnetwork.model.validators.*;
 import socialnetwork.repository.db.*;
+import socialnetwork.utils.events.FriendRequestEvent;
+import socialnetwork.utils.events.FriendRequestEventType;
+import socialnetwork.utils.observer.Observable;
+import socialnetwork.utils.observer.Observer;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class FriendRequestService {
+public class FriendRequestService implements Observable<FriendRequestEvent> {
     private final UserDBRepository userDBRepository;
     private final FriendshipDBRepository friendshipDBRepository;
     private final FriendRequestDBRepository friendRequestDBRepository;
@@ -79,6 +84,7 @@ public class FriendRequestService {
         Validator<FriendRequest> validator = new FriendRequestValidator();
         validator.validate(newFriendRequest);
         friendRequestDBRepository.save(newFriendRequest);
+        notifyObservers(new FriendRequestEvent(FriendRequestEventType.PENDING, newFriendRequest));
     }
 
     /**
@@ -95,6 +101,10 @@ public class FriendRequestService {
 
         friendshipDBRepository.save(friendship);
         friendRequestDBRepository.delete(new Tuple<>(username1, username2));
+
+        //aici trebuie observator si pentru friendship si pentru friendrequest?
+        FriendRequest oldFriendRequest = new FriendRequest(username1, username2);
+        notifyObservers(new FriendRequestEvent(FriendRequestEventType.APPROVED, oldFriendRequest));
     }
 
     /**
@@ -105,7 +115,9 @@ public class FriendRequestService {
     public void declineFriendRequest(String username1, String username2) {
         validateFriendRequest(username1, username2);
 
+        FriendRequest oldFriendRequest = friendRequestDBRepository.findOne(new Tuple<>(username1, username2));
         friendRequestDBRepository.delete(new Tuple<>(username1, username2));
+        notifyObservers(new FriendRequestEvent(FriendRequestEventType.REJECTED, oldFriendRequest));
     }
 
     /**
@@ -127,5 +139,22 @@ public class FriendRequestService {
 
     public Iterable<FriendRequest> getAll() {
         return friendRequestDBRepository.findAll();
+    }
+
+    private List<Observer<FriendRequestEvent>> observers = new ArrayList<>();
+
+    @Override
+    public void addObserver(Observer<FriendRequestEvent> e) {
+        observers.add(e);
+    }
+
+    @Override
+    public void removeObserver(Observer<FriendRequestEvent> e) {
+        observers.remove(e);
+    }
+
+    @Override
+    public void notifyObservers(FriendRequestEvent e) {
+        observers.forEach(x -> x.update(e));
     }
 }

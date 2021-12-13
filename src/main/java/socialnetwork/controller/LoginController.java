@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,7 +13,6 @@ import socialnetwork.Main;
 import socialnetwork.model.User;
 import socialnetwork.repository.db.FriendRequestDBRepository;
 import socialnetwork.repository.db.FriendshipDBRepository;
-import socialnetwork.repository.db.MessageDBRepository;
 import socialnetwork.repository.db.UserDBRepository;
 import socialnetwork.service.UserService;
 
@@ -51,7 +49,7 @@ public class LoginController {
             switchToUser(event, u);
     }
 
-    private String validateLogin() throws IOException {
+    private String validateLogin() {
         String un = null;
         if(userName.getText().isEmpty()) {
             wrong_login.setText("Please enter your username!");
@@ -73,7 +71,7 @@ public class LoginController {
 
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         UserController userController = newMenu.getController();
-        userController.setUser(username);
+        userController.initialize1(username);
 
         stage.setScene(newMenuScene);
         stage.show();
