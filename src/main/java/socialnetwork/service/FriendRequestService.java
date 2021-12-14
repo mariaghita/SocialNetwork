@@ -43,6 +43,22 @@ public class FriendRequestService implements Observable<FriendRequestEvent> {
     }
 
     /**
+     * finds all friend requests for a user - used for table
+     * @param username - the user whose account we are logged in
+     * @return list of friend request DTOs
+     */
+    public List<FriendRequestDTO> findFriendRequestToUser(String username){
+        Iterable<FriendRequest> friendRequests = friendRequestDBRepository.findTo(username);
+        List<FriendRequestDTO> result = new ArrayList<FriendRequestDTO>();
+        friendRequests.forEach(x->{
+            User foundUser = userDBRepository.findOne(x.getId().getFirst());
+            FriendRequestDTO friendRequestDTO = new FriendRequestDTO(foundUser.getFirstName(),foundUser.getLastName(),x.getLocalDateTime());
+            friendRequestDTO.setUsername(foundUser.getId());
+            result.add(friendRequestDTO);
+        });
+        return result;
+    }
+    /**
      *displays friend request to a certain user
      * @param username the user whose account we are logged in
      */
@@ -87,6 +103,8 @@ public class FriendRequestService implements Observable<FriendRequestEvent> {
         FriendRequest newFriendRequest = new FriendRequest(username1, username2);
         Validator<FriendRequest> validator = new FriendRequestValidator();
         validator.validate(newFriendRequest);
+        LocalDateTime date = LocalDateTime.now();
+        newFriendRequest.setLocalDateTime(date);
         friendRequestDBRepository.save(newFriendRequest);
         notifyObservers(new FriendRequestEvent(FriendRequestEventType.PENDING, newFriendRequest));
     }
