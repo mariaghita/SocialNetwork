@@ -69,8 +69,8 @@ public class FriendsController extends UserController implements Observer<Friend
     }
 
     public void setServices(){
-        UserDBRepository userDBRepository = new UserDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
-        FriendshipDBRepository friendshipDBRepository = new FriendshipDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
+        UserDBRepository userDBRepository = new UserDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
+        FriendshipDBRepository friendshipDBRepository = new FriendshipDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
 
         this.friendshipService= new FriendshipService(userDBRepository, friendshipDBRepository);
 
@@ -104,9 +104,13 @@ public class FriendsController extends UserController implements Observer<Friend
     public void doRemoveFriend(ActionEvent event) {
         UserDTO selected = tableViewFriends.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            friendshipService.removeFriendship(currentUsername, selected.getUserName());
-            String message = "You are no longer friends with" + selected.getFirstName() + " " + selected.getLastName() + "!";
-            MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Delete", message);
+            try {
+                friendshipService.removeFriendship(currentUsername, selected.getUserName());
+                String message = "You are no longer friends with " + selected.getFullName() + "!";
+                MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Delete", message);
+            } catch (Exception e) {
+                MessageAlert.showErrorMessage(null, e.getMessage());
+            }
         } else
             MessageAlert.showErrorMessage(null, "You didn't select any user that you want to unfriend!");
 

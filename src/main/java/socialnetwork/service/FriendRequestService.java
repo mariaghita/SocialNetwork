@@ -43,6 +43,22 @@ public class FriendRequestService implements Observable<FriendRequestEvent> {
     }
 
     /**
+     * finds all friend requests for a user - used for table
+     * @param username - the user whose account we are logged in
+     * @return list of friend request DTOs
+     */
+    public List<FriendRequestDTO> findFriendRequestToUser(String username){
+        Iterable<FriendRequest> friendRequests = friendRequestDBRepository.findTo(username);
+        List<FriendRequestDTO> result = new ArrayList<FriendRequestDTO>();
+        friendRequests.forEach(x->{
+            User foundUser = userDBRepository.findOne(x.getId().getFirst());
+            FriendRequestDTO friendRequestDTO = new FriendRequestDTO(foundUser.getFirstName(),foundUser.getLastName(),x.getLocalDateTime());
+            friendRequestDTO.setUsername(foundUser.getId());
+            result.add(friendRequestDTO);
+        });
+        return result;
+    }
+    /**
      *displays friend request to a certain user
      * @param username the user whose account we are logged in
      */
@@ -77,12 +93,18 @@ public class FriendRequestService implements Observable<FriendRequestEvent> {
             throw new ValidationException("You are already friends with this user!\n");
 
         Tuple<String> newFriendRequest0 = new Tuple<>(username2, username1);
-        if(friendRequestDBRepository.findOne(newFriendRequest0) == null)
+        if(friendRequestDBRepository.findOne(newFriendRequest0) != null)
             throw new ValidationException("You already have a pending friend request from this user!\n");
+
+        Tuple<String> newFriendRequest1 = new Tuple<>(username1, username2);
+        if(friendRequestDBRepository.findOne(newFriendRequest1) != null)
+            throw new ValidationException("You already sent a friend request to this user! Wait for them to answer first!\n");
 
         FriendRequest newFriendRequest = new FriendRequest(username1, username2);
         Validator<FriendRequest> validator = new FriendRequestValidator();
         validator.validate(newFriendRequest);
+        LocalDateTime date = LocalDateTime.now();
+        newFriendRequest.setLocalDateTime(date);
         friendRequestDBRepository.save(newFriendRequest);
         notifyObservers(new FriendRequestEvent(FriendRequestEventType.PENDING, newFriendRequest));
     }

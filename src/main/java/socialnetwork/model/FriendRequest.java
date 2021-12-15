@@ -1,12 +1,22 @@
 package socialnetwork.model;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class FriendRequest extends Entity<Tuple<String>> {
-
+    private LocalDateTime localDateTime;
     public FriendRequest(String username1, String username2) {
         Tuple<String> t = new Tuple<>(username1, username2);
         this.setId(t);
+
+    }
+
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+
+    public void setLocalDateTime(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
     }
 
     @Override

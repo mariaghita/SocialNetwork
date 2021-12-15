@@ -9,12 +9,14 @@ public class UserDTO extends Entity<String> {
     private String firstName;
     private String lastName;
     private LocalDateTime dateOfFriendship;
+    private String fullName;
 
     public UserDTO(String userName, String firstName, String lastName, LocalDateTime dateOfFriendship) {
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfFriendship = dateOfFriendship;
+        this.fullName = firstName + " " + lastName;
     }
 
     public String getUserName() {
@@ -45,13 +47,20 @@ public class UserDTO extends Entity<String> {
         return dateOfFriendship.format(Constants.DATE_TIME_FORMATTER);
     }
 
-
     public LocalDateTime getDateOfFriendshipAsDate() {
         return dateOfFriendship;
     }
 
     public void setDateOfFriendship(LocalDateTime dateOfFriendship) {
         this.dateOfFriendship = dateOfFriendship;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getFullNameRev() {
+        return lastName + " " + firstName;
     }
 
     /*
@@ -64,9 +73,14 @@ public class UserDTO extends Entity<String> {
 
     @Override
     public String toString() {
-        return userName +
-                " " + firstName +
-                " " + lastName +
-                " " + dateOfFriendship.format(Constants.DATE_TIME_FORMATTER);
+        if(dateOfFriendship == null)
+            return  firstName +
+                    " " + lastName +
+                    " ";
+        else
+            return userName +
+                    " " + firstName +
+                    " " + lastName +
+                    " " + dateOfFriendship.format(Constants.DATE_TIME_FORMATTER);
     }
 }
