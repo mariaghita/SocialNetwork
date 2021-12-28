@@ -13,13 +13,13 @@ import socialnetwork.Main;
 import java.io.IOException;
 
 public class UserController {
-    private String username;
+    protected String currentUsername;
 
     public UserController() {
     }
 
     @FXML
-    private Label currentUser;
+    protected Label currentUser;
 
     @FXML
     private Button manageFriends;
@@ -30,8 +30,8 @@ public class UserController {
     @FXML
     private Button logout;
 
-    public void setUser(String username){
-        this.username = username;
+    protected void initialize1(String username) {
+        this.currentUsername = username;
         currentUser.setText("Logged in as : " + username);
     }
 
@@ -53,8 +53,8 @@ public class UserController {
 
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         FriendsController friendsController = newMenu.getController();
+        friendsController.initialize1(currentUsername);
         friendsController.setServices();
-        friendsController.setUser(username);
 
         stage.setScene(newMenuScene);
         stage.show();
@@ -66,11 +66,10 @@ public class UserController {
 
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         FriendRequestsController friendRequestsController = newMenu.getController();
+        friendRequestsController.initialize1(currentUsername);
         friendRequestsController.setServices();
-        friendRequestsController.setUser(username);
 
         stage.setScene(newMenuScene);
         stage.show();
     }
-
 }

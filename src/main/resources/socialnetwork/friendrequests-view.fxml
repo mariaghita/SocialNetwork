@@ -2,6 +2,8 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -9,11 +11,11 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.FriendRequestsController">
    <left>
-      <AnchorPane prefHeight="338.0" prefWidth="181.0" style="-fx-background-color: #facb35;" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="338.0" prefWidth="181.0" style="-fx-background-color: ffe485;" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="manageFriends" layoutX="43.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchManageFriends" text="Manage Friends" />
             <Button fx:id="manageFriendRequests" layoutX="19.0" layoutY="64.0" mnemonicParsing="false" onAction="#switchManageFriendRequests" text="Manage Friend Requests" />
-            <Button layoutX="66.0" layoutY="110.0" mnemonicParsing="false" onAction="#userLogout" text="Logout" />
+            <Button layoutX="66.0" layoutY="288.0" mnemonicParsing="false" onAction="#userLogout" text="Logout" />
          </children>
       </AnchorPane>
    </left>
@@ -34,4 +36,20 @@
          </children>
       </AnchorPane>
    </top>
+   <right>
+      <AnchorPane prefHeight="339.0" prefWidth="422.0" BorderPane.alignment="CENTER">
+         <children>
+            <TableView fx:id="friendRequestTableView" prefHeight="295.0" prefWidth="419.0">
+              <columns>
+                <TableColumn fx:id="tableColumnFirstName" prefWidth="111.0" text="First Name" />
+                <TableColumn fx:id="tableColumnLastName" prefWidth="112.0" text="Last Name" />
+                  <TableColumn fx:id="tableColumnStatus" prefWidth="82.0" text="Status" />
+                  <TableColumn fx:id="tableColumnDate" prefWidth="113.0" text="Date of request" />
+              </columns>
+            </TableView>
+            <Button layoutX="14.0" layoutY="302.0" mnemonicParsing="false" onAction="#acceptFriendRequest" prefHeight="30.0" prefWidth="140.0" text="Accept Friend Request" />
+            <Button layoutX="261.0" layoutY="302.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="144.0" onAction="#declineFriendRequest" text="Decline Friend Request" />
+         </children>
+      </AnchorPane>
+   </right>
 </BorderPane>

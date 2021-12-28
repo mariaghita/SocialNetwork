@@ -4,6 +4,8 @@ import socialnetwork.model.FriendRequest;
 import socialnetwork.model.Tuple;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -77,13 +79,14 @@ public class FriendRequestDBRepository extends AbstractFriendDBRepository<Tuple<
      */
     @Override
     public FriendRequest save(FriendRequest friendRequest) {
-        String sql = "INSERT INTO friendrequests (\"from\", \"to\") VALUES (?, ?)";
+        String sql = "INSERT INTO friendrequests (\"from\", \"to\", date ) VALUES (?, ?, ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, friendRequest.getId().getFirst());
             statement.setString(2, friendRequest.getId().getSecond());
+            statement.setTimestamp(3, Timestamp.valueOf(friendRequest.getLocalDateTime()));
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -135,7 +138,10 @@ public class FriendRequestDBRepository extends AbstractFriendDBRepository<Tuple<
             while (resultSet.next()) {
                 String from = resultSet.getString("from");
                 String to = resultSet.getString("to");
+                Timestamp result_date = resultSet.getTimestamp("date");
+                LocalDateTime date = LocalDateTime.ofInstant(result_date.toInstant(), ZoneOffset.ofHours(0));
                 FriendRequest friendRequest = new FriendRequest(from, to);
+                friendRequest.setLocalDateTime(date);
                 friendRequests.add(friendRequest);
             }
             return friendRequests;
