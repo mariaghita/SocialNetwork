@@ -1,27 +1,25 @@
 package socialnetwork.service;
 
+import socialnetwork.model.Group;
 import socialnetwork.model.Message;
 import socialnetwork.model.MessageDTO;
 import socialnetwork.model.User;
+import socialnetwork.model.validators.GroupValidator;
 import socialnetwork.model.validators.MessageValidator;
 import socialnetwork.model.validators.ValidationException;
 import socialnetwork.model.validators.Validator;
-import socialnetwork.repository.db.FriendRequestDBRepository;
-import socialnetwork.repository.db.FriendshipDBRepository;
-import socialnetwork.repository.db.MessageDBRepository;
-import socialnetwork.repository.db.UserDBRepository;
+import socialnetwork.repository.db.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class MessageService {
     private final UserDBRepository userDBRepository;
     private final FriendshipDBRepository friendshipDBRepository;
     private final FriendRequestDBRepository friendRequestDBRepository;
     private final MessageDBRepository messageDBRepository;
-
+    //private final GroupDBRepository groupDBRepository = new GroupDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
+    private final GroupDBRepository groupDBRepository;
     /**
      * constructor
      * @param userDBRepository - user repository
@@ -29,50 +27,40 @@ public class MessageService {
      * @param friendRequestDBRepository - friend request repository
      * @param messageDBRepository - message repository
      */
-    public MessageService(UserDBRepository userDBRepository, FriendshipDBRepository friendshipDBRepository, FriendRequestDBRepository friendRequestDBRepository, MessageDBRepository messageDBRepository) {
+    public MessageService(UserDBRepository userDBRepository, FriendshipDBRepository friendshipDBRepository, FriendRequestDBRepository friendRequestDBRepository, MessageDBRepository messageDBRepository, GroupDBRepository groupDBRepository) {
         this.userDBRepository = userDBRepository;
         this.friendshipDBRepository = friendshipDBRepository;
         this.friendRequestDBRepository = friendRequestDBRepository;
         this.messageDBRepository = messageDBRepository;
+        this.groupDBRepository = groupDBRepository;
     }
 
     /**
      * function to send a message or to reply a message, depending on the id of the original
-     * @param senderUsername - username of the sender of the message
-     * @param recieversUsername - list of usernames of the receivers of the message
-     * @param text - the text of the message
-     * @param idOfMessage - the id of the new message
-     * @param idOfOriginal - id of the message the user wants to reply to. if null -> new message
+     * @param message - message to send
      */
-    public void sendMessage(String senderUsername, List<String> recieversUsername, String text, Long idOfMessage, Long idOfOriginal){
+    public void sendMessage(Message message){
 
-        if(messageDBRepository.findOne(idOfMessage)!=null)
-            throw new ValidationException("Id of message already in use.");
+        List<String> recieversUsername = message.getTo();
+        Long idOfOriginal = message.getOrginalMessage();
 
         for(String username : recieversUsername)
             if(userDBRepository.findOne(username) == null)
                 throw new ValidationException("One of the users does not exists.");
 
-
-
-
+        if(message.getTo().contains(message.getFrom()))
+            throw new ValidationException("You cannot send a message to yourself!");
         LocalDateTime date = LocalDateTime.now();
-        Message message = new Message(senderUsername,recieversUsername,null,text);
-        message.setId(idOfMessage);
         message.setDate(date);
 
         Validator<Message> validator = new MessageValidator();
         validator.validate(message);
-        if(idOfOriginal != null)
-            if(messageDBRepository.findOne(idOfOriginal) == null)
-                throw new ValidationException("The message you want to reply to does not exist!");
-            else {
-                if(!receivedMessage(idOfOriginal, recieversUsername)) //verifies if the message the user is replying to have been received
-                    throw new ValidationException("You cannot send a message to a user who has not received it!");
-                message.setOrginalMessage(idOfOriginal);
-            }
-        messageDBRepository.save(message);
 
+        if(idOfOriginal != null)
+            message.setOrginalMessage(idOfOriginal);
+
+
+        messageDBRepository.save(message);
     }
 
     /**
@@ -90,7 +78,8 @@ public class MessageService {
 
         for(Message message : messages){
             if((message.getFrom().equals(firstUser) && message.getTo().contains(secondUser)) || (message.getFrom().equals(secondUser) && message.getTo().contains(firstUser))){
-               result.add(message);
+                if(message.getTo().size()==1)
+                    result.add(message);
             }
 
         }
@@ -124,19 +113,98 @@ public class MessageService {
         return result;
     }
 
-    /**
-     * verifies if a message has been received by the users is being sent to
-     * @param idMessage
-     * @return true if all the users have received the message/ false if not
-     */
-    private boolean receivedMessage(Long idMessage, List<String> toUser ){
-        Message message = messageDBRepository.findOne(idMessage);
-        for(String username: toUser)
-            if(!message.getTo().contains(username))
-                return false;
 
-        return true;
+    /**
+     * finds all messages containing a specific string received by a user
+     * @param partOfMessage - the string used to search for messages
+     * @param username - the username of the user who received the messages containing partOfMessage
+     * @return list of messageDTOs with all the messages found
+     */
+    public List<MessageDTO> findMessages(String partOfMessage, String username){
+        Iterable<Message> messages = messageDBRepository.findAll();
+        List<Message> result = new ArrayList<Message>();
+        for(Message message : messages){
+            if((message.getTo().size() == 1) && message.getText().contains(partOfMessage) && (message.getTo().contains(username)))
+                result.add(message);
+        }
+        result.sort(Comparator.comparing(Message::getDate));
+        return convertMessagesWithoutOriginal(result);
     }
+
+    /**
+     * finds all messages that have more than 1 recipients  - used for replyAll function
+     * @param username - the username of the user who is seeing the messages
+     * @return list of messages which fulfill the criteria
+     */
+    public List<MessageDTO> findGroupMessages(String username, String pieceOfMessage){
+        List<Group> groups = getGroupsOfAUser(username);
+        //todo
+        return null;
+    }
+
+    /**
+     * function to convert messages to messageDTO without getting the original message - used for reply functions
+     * @param list - list of messages to be converted
+     * @return list of objects messageDTO
+     */
+    private List<MessageDTO> convertMessagesWithoutOriginal(List<Message> list){
+        List<MessageDTO> result = new ArrayList<>();
+        list.forEach(x-> {
+            List<User> toUsers = new ArrayList<>();
+            x.getTo().forEach(y -> {
+                toUsers.add(userDBRepository.findOne(y));
+            });
+            MessageDTO messageDTO = new MessageDTO(userDBRepository.findOne(x.getFrom()), toUsers, x.getDate(), null, x.getText());
+            messageDTO.setId(x.getId());
+            result.add(messageDTO);
+        });
+        return result;
+
+    }
+
+
+    public void sendAGroupMessage(Message message) throws NumberFormatException{
+        List<String> to = message.getTo();
+        if(to.size() > 1)
+            throw new ValidationException("Please provide a single group!.."); // de modificat in viitorul apropiat vbreau doar sa vad adaca merge
+
+        Long group = Long.parseLong(to.get(0)); // hehe merge!!
+
+
+        Group foundGroup = groupDBRepository.findOne(group);
+        LocalDateTime date = LocalDateTime.now();
+        message.setDate(date);
+        foundGroup.getMessages().add(message);
+        groupDBRepository.update(foundGroup);
+    }
+
+    public List<MessageDTO> getGroupConversation(Long groupID){
+        Group group = groupDBRepository.findOne(groupID);
+        if(group == null)
+            throw new ValidationException("The group does not exist");
+
+        return convertMessages(group.getMessages());
+    }
+
+    public List<Group> getGroupsOfAUser(String username){
+        Iterable<Group> groups = groupDBRepository.findAll();
+        List<Group> result = new ArrayList<Group>();
+        for(Group group: groups){
+            if(group.getUsers().contains(username))
+                result.add(group);
+        }
+        return result;
+    }
+
+    public void createAGroup(Group group){
+        Validator<Group> groupValidator = new GroupValidator();
+        groupValidator.validate(group);
+        for(String user : group.getUsers())
+            if(userDBRepository.findOne(user) == null)
+                throw new ValidationException("one of the users does not exist");
+        groupDBRepository.save(group);
+    }
+
 
 
 }
