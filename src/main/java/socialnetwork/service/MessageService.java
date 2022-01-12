@@ -9,11 +9,14 @@ import socialnetwork.model.validators.MessageValidator;
 import socialnetwork.model.validators.ValidationException;
 import socialnetwork.model.validators.Validator;
 import socialnetwork.repository.db.*;
+import socialnetwork.utils.events.MessageEvent;
+import socialnetwork.utils.observer.Observable;
+import socialnetwork.utils.observer.Observer;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class MessageService {
+public class MessageService implements Observable<MessageEvent> {
     private final UserDBRepository userDBRepository;
     private final FriendshipDBRepository friendshipDBRepository;
     private final FriendRequestDBRepository friendRequestDBRepository;
@@ -205,6 +208,19 @@ public class MessageService {
         groupDBRepository.save(group);
     }
 
+    private List<Observer<MessageEvent>> observers = new ArrayList<>();
+    @Override
+    public void addObserver(Observer<MessageEvent> e) {
+        observers.add(e);
+    }
 
+    @Override
+    public void removeObserver(Observer<MessageEvent> e) {
+        observers.remove(e);
+    }
 
+    @Override
+    public void notifyObservers(MessageEvent t) {
+        observers.forEach(x -> x.update(t));
+    }
 }

@@ -72,4 +72,17 @@ public class UserController {
         stage.setScene(newMenuScene);
         stage.show();
     }
+
+    public void switchManageMessages(ActionEvent event) throws IOException{
+        FXMLLoader newMenu = new FXMLLoader(Main.class.getResource("messagesmenu-view.fxml"));
+        Scene newMenuScene = new Scene(newMenu.load(), 750, 500);
+
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        MessagesController messagesController = newMenu.getController();
+        messagesController.initialize1(currentUsername);
+        messagesController.setServices(currentUsername);
+
+        stage.setScene(newMenuScene);
+        stage.show();
+    }
 }

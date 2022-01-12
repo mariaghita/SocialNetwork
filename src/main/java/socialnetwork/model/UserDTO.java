@@ -3,6 +3,7 @@ package socialnetwork.model;
 import socialnetwork.utils.Constants;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class UserDTO extends Entity<String> {
     private String userName;
@@ -10,6 +11,7 @@ public class UserDTO extends Entity<String> {
     private String lastName;
     private LocalDateTime dateOfFriendship;
     private String fullName;
+
 
     public UserDTO(String userName, String firstName, String lastName, LocalDateTime dateOfFriendship) {
         this.userName = userName;

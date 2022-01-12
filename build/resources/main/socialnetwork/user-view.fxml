@@ -14,6 +14,7 @@
             <Button fx:id="manageFriends" layoutX="43.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchManageFriends" text="Manage Friends" />
             <Button fx:id="manageFriendRequests" layoutX="19.0" layoutY="64.0" mnemonicParsing="false" onAction="#switchManageFriendRequests" text="Manage Friend Requests" />
             <Button layoutX="66.0" layoutY="288.0" mnemonicParsing="false" onAction="#userLogout" text="Logout" />
+            <Button fx:id="manageMessages" layoutX="50.0" layoutY="101.0" mnemonicParsing="false" onAction="#switchManageMessages" prefHeight="25.0" prefWidth="83.0" text="Messages" />
          </children>
       </AnchorPane>
    </left>

@@ -81,6 +81,8 @@ public class MessageDBRepository extends AbstractDBRepository<Long, Message> {
         return null;
     }
 
+
+
     /**
      * gets all messages saved in the database
      * @return iterable of messages
@@ -125,7 +127,7 @@ public class MessageDBRepository extends AbstractDBRepository<Long, Message> {
      */
     @Override
     public Message save(Message entity) {
-        String sql = "INSERT INTO messages (date, \"from\", \"originalMessage\", text, id ) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO messages (date, \"from\", \"originalMessage\", text ) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -137,14 +139,33 @@ public class MessageDBRepository extends AbstractDBRepository<Long, Message> {
             else
                 statement.setLong(3, entity.getOrginalMessage());
             statement.setString(4,entity.getText());
-            statement.setLong(5,entity.getId());
+            //statement.setLong(5,entity.getId());
             statement.executeUpdate();
             for(String user: entity.getTo())
-                saveOneRecipient(entity.getId(), user);
+                saveOneRecipient(getNewestIdInserted(), user);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+        return null;
+    }
+
+    /**
+     * function to get the id of the last inserted message
+     * @return the id of the last message - type long
+     */
+    private Long getNewestIdInserted(){
+        String sql = "select id from messages order by id desc limit 1";
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+            resultSet.next();
+            Long id = resultSet.getLong("id");
+            return id;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
