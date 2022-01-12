@@ -5,13 +5,18 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.w3c.dom.Text;
 import org.w3c.dom.events.MouseEvent;
+import socialnetwork.Main;
 import socialnetwork.model.Group;
 import socialnetwork.model.Message;
 import socialnetwork.model.MessageDTO;
@@ -22,6 +27,7 @@ import socialnetwork.service.UserService;
 import socialnetwork.utils.events.MessageEvent;
 import socialnetwork.utils.observer.Observer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,20 +41,25 @@ public class MessagesController extends UserController implements Observer<Messa
     MessageService messageService;
     UserService userService;
     List<Label> messages;
-
+    Group selected;
 
     @FXML
     VBox chatBox;
 
 
     List<UserDTO> allUsers;
+    List<Group> allGroups;
     ObservableList<UserDTO> model = FXCollections.observableArrayList();
+    ObservableList<Group> groupModel = FXCollections.observableArrayList();
 
     @FXML
     TableView<UserDTO> usersTableView;
 
     @FXML
     TableColumn<UserDTO,String> tableColumnName;
+
+    @FXML
+    TableColumn<Group, String> tableGroupColumnName;
 
     @FXML
     TextField searchBar;
@@ -68,7 +79,16 @@ public class MessagesController extends UserController implements Observer<Messa
     @FXML
     Label noChatSelected;
 
+    @FXML
+    TableView<Group> groupsTableView;
+
+    @FXML
+    Button switchButton;
+
+
+
     private AtomicBoolean friendsBool = new AtomicBoolean();
+
     private String friendUsername;
 
 
@@ -78,7 +98,9 @@ public class MessagesController extends UserController implements Observer<Messa
     private void initialize(){
         tableColumnName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         usersTableView.setItems(model);
-
+        this.friendsBool.set(true);
+        this.groupsTableView.setVisible(false);
+        this.switchButton.setText("Groups");
         searchBar.textProperty().addListener(o -> handleFilter());
     }
 
@@ -96,6 +118,24 @@ public class MessagesController extends UserController implements Observer<Messa
                 .collect(Collectors.toList());
 
     }
+
+    @FXML
+    private void initializeGroup(){
+        tableGroupColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        groupsTableView.setItems(groupModel);
+
+    }
+
+    private void initGroupModel(){
+        searchBar.clear();
+        makeChatBoxInvisible();
+        groupModel.setAll(allGroups);
+    }
+
+    private void setGroupList(){
+        allGroups = messageService.getGroupsOfAUser(currentUsername);
+    }
+
 
     public void setServices(String username){
         UserDBRepository userDBRepository = new UserDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
@@ -115,6 +155,8 @@ public class MessagesController extends UserController implements Observer<Messa
         setList();
         initModel();
     }
+
+
 
     private void handleFilter() {
         searchPredicate(searchBar, model, allUsers);
@@ -163,17 +205,7 @@ public class MessagesController extends UserController implements Observer<Messa
 
         messages = new ArrayList<Label>();
         for(MessageDTO messageDTO: conversation){
-            messages.add(new Label(messageDTO.getText()));
-            messages.get(messages.size()-1).setMaxWidth(Double.MAX_VALUE);
-
-
-            if(messageDTO.getFrom().getId().equals(currentUsername))
-                messages.get(messages.size()-1).setAlignment(Pos.CENTER_RIGHT);
-            else {
-                messages.get(messages.size() - 1).setAlignment(Pos.CENTER_LEFT);
-
-            }
-            chatBox.getChildren().add(messages.get(messages.size()-1));
+            insertChatRows(messageDTO);
 
         }
         chatBox.setSpacing(5);
@@ -198,10 +230,119 @@ public class MessagesController extends UserController implements Observer<Messa
                 e.printStackTrace();
             }
         }else
-            MessageAlert.showErrorMessage(null,"nO USER SELECTED.");
+            MessageAlert.showErrorMessage(null,"No user selected.");
     }
 
+    public void makeGroupsInvisible(){
+        this.groupsTableView.setVisible(false);
+        this.usersTableView.setVisible(true);
+    }
 
+    private void makeGroupsVisible(){
+        this.usersTableView.setVisible(false);
+        this.groupsTableView.setVisible(true);
+        initializeGroup();
+        setGroupList();
+        initGroupModel();
+    }
+
+    public void switchGroups(ActionEvent actionEvent){
+        makeGroupsVisible();
+        this.switchButton.setText("Users");
+        this.friendsBool.set(false);
+
+    }
+
+    public void chatButtonFunction(ActionEvent actionEvent){
+        if(friendsBool.get())
+            showConversation(actionEvent);
+        else
+            showGroupConversation(actionEvent);
+
+    }
+
+    public void showGroupConversation(ActionEvent actionEvent){
+        selected = groupsTableView.getSelectionModel().getSelectedItem();
+        this.chatBox.getChildren().clear();
+
+        this.chatUser.setText("Group: " + selected.getName());
+        this.chatUser.setAlignment(Pos.CENTER);
+        List<MessageDTO> conversation = this.messageService.getGroupConversation(selected.getId());
+
+        makeChatBoxVisible();
+
+        messages = new ArrayList<Label>();
+
+        for(MessageDTO messageDTO: conversation){
+
+            if(!(messageDTO.getFrom().getId().equals(currentUsername))) {
+                messages.add(new Label(messageDTO.getFrom().getFirstName()+ ": "));
+                messages.get(messages.size()-1).setMaxWidth(Double.MAX_VALUE);
+                messages.get(messages.size()-1).setAlignment(Pos.CENTER_LEFT);
+                messages.get(messages.size()-1).setPadding(new Insets(0,1,-7,0));
+                chatBox.getChildren().add(messages.get(messages.size()-1));
+            }
+
+            insertChatRows(messageDTO);
+
+        }
+        chatBox.setSpacing(5);
+        scroller.setContent(chatBox);
+        scroller.setFitToWidth(chatBox.isFillWidth());
+        scroller.setVvalue(1.0);
+        scroller.setHvalue(1.0);
+        scroller.setPannable(true);
+
+    }
+
+    private void insertChatRows(MessageDTO messageDTO) {
+        messages.add(new Label(messageDTO.getText()));
+
+        messages.get(messages.size()-1).setMaxWidth(Double.MAX_VALUE);
+
+        if(messageDTO.getFrom().getId().equals(currentUsername))
+            messages.get(messages.size()-1).setAlignment(Pos.CENTER_RIGHT);
+        else {
+            messages.get(messages.size() - 1).setAlignment(Pos.CENTER_LEFT);
+
+        }
+        chatBox.getChildren().add(messages.get(messages.size()-1));
+    }
+
+    private void switchUsers(ActionEvent actionEvent){
+        makeGroupsInvisible();
+        this.switchButton.setText("Groups");
+        this.friendsBool.set(true);
+    }
+
+    public void switchButtonFunction(ActionEvent actionEvent){
+        if(friendsBool.get())
+            switchGroups(actionEvent);
+        else
+            switchUsers(actionEvent);
+    }
+
+    public void sendGroupMessage(ActionEvent actionEvent){
+
+        if(this.selected != null){
+            try{
+                Message message = new Message(this.currentUsername,List.of(selected.getId().toString()),null,textMessage.getText());
+                messageService.sendAGroupMessage(message);
+                showGroupConversation(actionEvent);
+                this.textMessage.clear();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }else
+            System.out.println("Da");
+    }
+
+    public void sendButtonFunction(ActionEvent actionEvent){
+        if(friendsBool.get())
+            sendMessage(actionEvent);
+        else
+            sendGroupMessage(actionEvent);
+    }
 
 
 }

@@ -169,9 +169,9 @@ public class MessageService implements Observable<MessageEvent> {
     public void sendAGroupMessage(Message message) throws NumberFormatException{
         List<String> to = message.getTo();
         if(to.size() > 1)
-            throw new ValidationException("Please provide a single group!.."); // de modificat in viitorul apropiat vbreau doar sa vad adaca merge
+            throw new ValidationException("Please provide a single group!..");
 
-        Long group = Long.parseLong(to.get(0)); // hehe merge!!
+        Long group = Long.parseLong(to.get(0));
 
 
         Group foundGroup = groupDBRepository.findOne(group);
