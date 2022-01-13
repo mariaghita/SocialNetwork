@@ -76,6 +76,23 @@ public class FriendRequestService implements Observable<FriendRequestEvent> {
     }
 
     /**
+     * finds all friend requests for a user - used for table
+     * @param username - the user whose account we are logged in
+     * @return list of friend request DTOs
+     */
+    public List<FriendRequestDTO> findFriendRequestFromUser(String username){
+        Iterable<FriendRequest> friendRequests = friendRequestDBRepository.findFrom(username);
+        List<FriendRequestDTO> result = new ArrayList<FriendRequestDTO>();
+        friendRequests.forEach(x->{
+            User foundUser = userDBRepository.findOne(x.getId().getSecond());
+            FriendRequestDTO friendRequestDTO = new FriendRequestDTO(foundUser.getFirstName(),foundUser.getLastName(),x.getLocalDateTime());
+            friendRequestDTO.setUsername(foundUser.getId());
+            result.add(friendRequestDTO);
+        });
+        return result;
+    }
+
+    /**
      *username1 sends a friend requests to username2
      * @param username1 from
      * @param username2 to
@@ -140,6 +157,20 @@ public class FriendRequestService implements Observable<FriendRequestEvent> {
         FriendRequest oldFriendRequest = friendRequestDBRepository.findOne(new Tuple<>(username1, username2));
         friendRequestDBRepository.delete(new Tuple<>(username1, username2));
         notifyObservers(new FriendRequestEvent(FriendRequestEventType.REJECTED, oldFriendRequest));
+    }
+
+    /**
+     <<<<<<< HEAD
+     *delete a friend request from username1 to username2
+     * @param username1 from
+     * @param username2 to
+     */
+    public void deleteFriendRequest(String username1, String username2) {
+        validateFriendRequest(username1, username2);
+
+        FriendRequest oldFriendRequest = friendRequestDBRepository.findOne(new Tuple<>(username1, username2));
+        friendRequestDBRepository.delete(new Tuple<>(username1, username2));
+        notifyObservers(new FriendRequestEvent(FriendRequestEventType.DELETED, oldFriendRequest));
     }
 
     /**

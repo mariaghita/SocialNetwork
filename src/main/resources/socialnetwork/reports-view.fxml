@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.UserController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.ReportsController">
    <left>
       <AnchorPane prefHeight="338.0" prefWidth="181.0" style="-fx-background-color: ffe485;" BorderPane.alignment="CENTER">
          <children>
@@ -100,10 +100,14 @@
       </AnchorPane>
    </top>
    <center>
-      <ImageView fitHeight="427.0" fitWidth="564.0" BorderPane.alignment="CENTER">
-         <image>
-            <Image url="@../images/bg2.png" />
-         </image>
-      </ImageView>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="429.0" fitWidth="564.0" layoutY="-1.0">
+               <image>
+                  <Image url="@../images/bg3.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
    </center>
 </BorderPane>

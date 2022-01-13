@@ -8,11 +8,13 @@ public class User extends Entity<String> {
     private String firstName;
     private String lastName;
     private List<User> friendList;
+    private String password;
 
-    public User(String firstName, String lastName) {
+    public User(String firstName, String lastName, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         friendList = new ArrayList<>();
+        this.password = password;
     }
 
     public String getFirstName() {
@@ -66,5 +68,13 @@ public class User extends Entity<String> {
     @Override
     public int hashCode() {
         return Objects.hash(getFirstName().substring(0,2), getLastName().substring(0,2));
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

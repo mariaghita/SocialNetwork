@@ -1,5 +1,5 @@
 package socialnetwork.utils.events;
 
 public enum FriendRequestEventType {
-    PENDING, APPROVED, REJECTED
+    PENDING, APPROVED, REJECTED, DELETED
 }

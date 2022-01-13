@@ -6,7 +6,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
 import socialnetwork.model.UserDTO;
 import socialnetwork.repository.db.FriendRequestDBRepository;
 import socialnetwork.repository.db.FriendshipDBRepository;
@@ -23,12 +22,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class AddFriendPopupController implements Observer<FriendRequestEvent> {
+public class DiscoverController extends UserController implements Observer<FriendRequestEvent> {
     FriendshipService friendshipService;
     UserService userService;
     FriendRequestService friendRequestService;
     private String currentUsername;
-    Stage stage;
+
     List<UserDTO> allUsers;
     ObservableList<UserDTO> model = FXCollections.observableArrayList();
 
@@ -62,10 +61,10 @@ public class AddFriendPopupController implements Observer<FriendRequestEvent> {
         searchBar.textProperty().addListener(o -> handleFilter());
     }
 
-    public void setServices(Stage stage, String username) {
-        UserDBRepository userDBRepository = new UserDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
-        FriendshipDBRepository friendshipDBRepository = new FriendshipDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
-        FriendRequestDBRepository friendRequestDBRepository = new FriendRequestDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
+    public void setServices(String username) {
+        UserDBRepository userDBRepository = new UserDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
+        FriendshipDBRepository friendshipDBRepository = new FriendshipDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
+        FriendRequestDBRepository friendRequestDBRepository = new FriendRequestDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
 
         this.userService = new UserService(userDBRepository, friendshipDBRepository, friendRequestDBRepository);
         this.friendshipService= new FriendshipService(userDBRepository, friendshipDBRepository);
@@ -74,7 +73,6 @@ public class AddFriendPopupController implements Observer<FriendRequestEvent> {
         this.friendRequestService.addObserver(this);
 
         this.currentUsername = username;
-        this.stage = stage;
 
         setList();
         initModel();
@@ -98,28 +96,30 @@ public class AddFriendPopupController implements Observer<FriendRequestEvent> {
     }
 
     private void handleFilter() {
-        MessagesController.searchPredicate(searchBar, model, allUsers);
+        Predicate<UserDTO> p1 = e -> e.getFullName().toLowerCase().contains(searchBar.getText().toLowerCase());
+        Predicate<UserDTO> p2 = e -> e.getFullNameRev().toLowerCase().contains(searchBar.getText().toLowerCase());
+
+        model.setAll(allUsers
+                .stream()
+                .filter(p1.or(p2))
+                .collect(Collectors.toList()));
     }
 
     public void doSendFriendRequest(ActionEvent event) {
         UserDTO selected = users.getSelectionModel().getSelectedItem();
         if (selected != null) {
-             try {
-                 friendRequestService.addFriendRequest(currentUsername, selected.getUserName());
-                 String message = "Friend request sent to " + selected.getFullName() + "!";
-                 MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Success", message);
-             } catch(Exception e) {
-                 MessageAlert.showErrorMessage(null, e.getMessage());
-             }
+            try {
+                friendRequestService.addFriendRequest(currentUsername, selected.getUserName());
+                String message = "Friend request sent to " + selected.getFullName() + "!";
+                MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Success", message);
+            } catch(Exception e) {
+                MessageAlert.showErrorMessage(null, e.getMessage());
+            }
         } else
             MessageAlert.showErrorMessage(null, "You didn't select any user that you want to befriend!");
     }
 
     public void doCleanSearchBar(ActionEvent event) {
         initModel();
-    }
-
-    public void doExitPopup(ActionEvent event) {
-        stage.close();
     }
 }

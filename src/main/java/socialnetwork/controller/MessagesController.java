@@ -138,11 +138,11 @@ public class MessagesController extends UserController implements Observer<Messa
 
 
     public void setServices(String username){
-        UserDBRepository userDBRepository = new UserDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
-        FriendshipDBRepository friendshipDBRepository = new FriendshipDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
-        FriendRequestDBRepository friendRequestDBRepository = new FriendRequestDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
-        GroupDBRepository groupDBRepository = new GroupDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
-        MessageDBRepository messageDBRepository = new MessageDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
+        UserDBRepository userDBRepository = new UserDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
+        FriendshipDBRepository friendshipDBRepository = new FriendshipDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
+        FriendRequestDBRepository friendRequestDBRepository = new FriendRequestDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
+        MessageDBRepository messageDBRepository = new MessageDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
+        GroupDBRepository groupDBRepository = new GroupDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
 
         this.userService = new UserService(userDBRepository, friendshipDBRepository, friendRequestDBRepository);
         this.messageService = new MessageService(userDBRepository,friendshipDBRepository,friendRequestDBRepository,messageDBRepository,groupDBRepository);
@@ -310,6 +310,7 @@ public class MessagesController extends UserController implements Observer<Messa
     }
 
     private void switchUsers(ActionEvent actionEvent){
+        makeChatBoxInvisible();
         makeGroupsInvisible();
         this.switchButton.setText("Groups");
         this.friendsBool.set(true);

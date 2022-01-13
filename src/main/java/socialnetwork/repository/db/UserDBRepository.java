@@ -29,8 +29,9 @@ public class UserDBRepository extends AbstractDBRepository<String, User> {
                 while (resultSet.next()) {
                     String firstName = resultSet.getString("firstName");
                     String lastName = resultSet.getString("lastName");
+                    String passWord = resultSet.getString("password");
 
-                    user = new User(firstName, lastName);
+                    user = new User(firstName, lastName, passWord);
                     user.setId(userName);
                 }
                 return user;
@@ -56,8 +57,9 @@ public class UserDBRepository extends AbstractDBRepository<String, User> {
                 String username = resultSet.getString("username");
                 String firstName = resultSet.getString("firstName");
                 String lastName = resultSet.getString("lastName");
+                String passWord = resultSet.getString("password");
 
-                User user = new User(firstName, lastName);
+                User user = new User(firstName, lastName, passWord);
                 user.setId(username);
                 users.add(user);
             }

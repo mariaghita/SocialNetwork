@@ -18,7 +18,7 @@ public class UserFileRepository extends AbstractFileRepository<String,User>{
      */
     @Override
     public User extractEntity(List<String> attributes) {
-        User user = new User(attributes.get(1),attributes.get(2));
+        User user = new User(attributes.get(1),attributes.get(2), attributes.get(3));
         user.setId(attributes.get(0));
         return user;
     }

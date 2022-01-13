@@ -2,18 +2,15 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.MessagesController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.SentFriendRequestsController">
     <left>
         <AnchorPane prefHeight="338.0" prefWidth="181.0" style="-fx-background-color: ffe485;" BorderPane.alignment="CENTER">
             <children>
@@ -105,33 +102,24 @@
         </AnchorPane>
     </top>
     <right>
-    </right>
-    <center>
-        <AnchorPane prefHeight="126.0" prefWidth="419.0" BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="427.0" prefWidth="549.0" BorderPane.alignment="CENTER">
             <children>
-                <ImageView fitHeight="429.0" fitWidth="564.0" layoutY="-1.0">
+                <ImageView fitHeight="428.0" fitWidth="556.0" layoutX="5.0" layoutY="-1.0">
                     <image>
                         <Image url="@../images/bg3.png" />
                     </image>
                 </ImageView>
-                <TableView fx:id="groupsTableView" layoutY="29.0" prefHeight="370.0" prefWidth="178.0">
+                <TableView fx:id="friendRequestTableView" layoutX="5.0" layoutY="-1.0" prefHeight="378.0" prefWidth="564.0">
                     <columns>
-                        <TableColumn fx:id="tableGroupColumnName" prefWidth="177.0" text="Name" />
+                        <TableColumn fx:id="tableColumnFirstName" prefWidth="148.0" text="First Name" />
+                        <TableColumn fx:id="tableColumnLastName" prefWidth="127.0" text="Last Name" />
+                        <TableColumn fx:id="tableColumnStatus" prefWidth="117.0" text="Status" />
+                        <TableColumn fx:id="tableColumnDate" prefWidth="179.0" text="Date of request" />
                     </columns>
                 </TableView>
-                <TextField fx:id="searchBar" layoutX="1.0" prefHeight="29.0" prefWidth="178.0" text="search..." />
-                <Button fx:id="newChat" layoutX="101.0" layoutY="400.0" mnemonicParsing="false" onAction="#showConversation" prefHeight="25.0" prefWidth="58.0" text="Chat" />
-                <TextField fx:id="textMessage" layoutX="193.0" layoutY="400.0" prefHeight="25.0" prefWidth="283.0" />
-                <Button fx:id="sendButton" layoutX="480.0" layoutY="400.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="25.0" prefWidth="70.0" text="Send" />
-                <Label fx:id="chatUser" layoutX="213.0" layoutY="6.0" prefHeight="17.0" prefWidth="331.0" />
-                <Label fx:id="noChatSelected" layoutX="343.0" layoutY="177.0" prefHeight="27.0" prefWidth="81.0" text="It's quiet.." />
-                <ScrollPane fx:id="scroller" layoutX="185.0" layoutY="25.0" prefHeight="362.0" prefWidth="376.0">
-                    <content>
-                        <VBox fx:id="chatBox" prefHeight="363.0" prefWidth="354.0" />
-                    </content>
-                </ScrollPane>
-            <Button fx:id="switchUsers" layoutX="14.0" layoutY="400.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="72.0" text="Users" />
+                <Button fx:id="unsend" layoutX="420.0" layoutY="388.0" mnemonicParsing="false" onAction="#unsendFriendRequest" prefHeight="30.0" prefWidth="144.0" text="Unsend Friend Request" />
+            <Button layoutX="14.0" layoutY="389.0" mnemonicParsing="false" onAction="#switchManageFriendRequests" prefHeight="29.0" prefWidth="153.0" text="Received Friend Requests" />
             </children>
         </AnchorPane>
-    </center>
+    </right>
 </BorderPane>
