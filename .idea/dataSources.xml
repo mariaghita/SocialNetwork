@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/socialnetwork</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="gitdatabse@localhost" uuid="5c5a979d-3856-4ff9-8d68-e9897a7ea8f5">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/gitdatabse</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

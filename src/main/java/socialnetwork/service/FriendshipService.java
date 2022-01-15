@@ -164,6 +164,16 @@ public class FriendshipService implements Observable<FriendshipEvent> {
         return friendshipDBRepository.findOne(testFriendship);
     }
 
+    public List<UserDTO> findFriendsCreatedByDate(LocalDateTime startDate, LocalDateTime endDate, String loggedUser){
+        List<UserDTO> friends = getFriendList(loggedUser);
+        List<UserDTO> result = new ArrayList<UserDTO>();
+        friends.forEach(userDTO -> {
+            if(userDTO.getDateOfFriendshipAsDate().isBefore(startDate) && userDTO.getDateOfFriendshipAsDate().isBefore(endDate))
+                result.add(userDTO);
+        });
+        return result;
+    }
+
     public Iterable<Friendship>getAll() {
         return friendshipDBRepository.findAll();
     }

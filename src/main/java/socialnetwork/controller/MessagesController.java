@@ -3,20 +3,13 @@ package socialnetwork.controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import org.w3c.dom.Text;
-import org.w3c.dom.events.MouseEvent;
-import socialnetwork.Main;
+import javafx.scene.text.Font;
 import socialnetwork.model.Group;
 import socialnetwork.model.Message;
 import socialnetwork.model.MessageDTO;
@@ -27,7 +20,6 @@ import socialnetwork.service.UserService;
 import socialnetwork.utils.events.MessageEvent;
 import socialnetwork.utils.observer.Observer;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,6 +54,9 @@ public class MessagesController extends UserController implements Observer<Messa
     TableColumn<Group, String> tableGroupColumnName;
 
     @FXML
+    TableColumn<UserDTO,String> tableColumnName1;
+
+    @FXML
     TextField searchBar;
 
     @FXML
@@ -85,24 +80,60 @@ public class MessagesController extends UserController implements Observer<Messa
     @FXML
     Button switchButton;
 
+    @FXML
+    Button createGroupButton;
 
+    @FXML
+    Button createButton;
 
     private AtomicBoolean friendsBool = new AtomicBoolean();
 
     private String friendUsername;
 
+     @FXML
+     TableView<UserDTO> createGroupTableView;
+
+     @FXML
+     TableColumn<UserDTO,String> tableColumnUsername;
 
     public MessagesController(){super();}
 
     @FXML
     private void initialize(){
         tableColumnName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
+        usersTableView.getStylesheets().add("/css/TableView.css");
         usersTableView.setItems(model);
+
+        this.scroller.getStylesheets().add("/css/ScrollPane.css");
+        chatBox.setStyle("-fx-background-color: transparent");
+
         this.friendsBool.set(true);
         this.groupsTableView.setVisible(false);
         this.switchButton.setText("Groups");
+        this.createGroupButton.setVisible(false);
+        this.createGroupTableView.setVisible(false);
+        this.chatUser.setFont(new Font("Script MT Bold", 30));
+        this.noChatSelected.setFont(new Font("Script MT Bold", 40));
+        this.textMessage.getStylesheets().add("/css/TextField.css");
+        textMessage.setStyle("-fx-padding: 10 0 0 0");
+        this.createButton.setVisible(false);
+        makeGroupsInvisible();
+        searchBar.getStylesheets().add("/css/TextField.css");
+        searchBar.setStyle("-fx-padding: 0.166667em;");
+        newChat.getStylesheets().add("/css/Button.css");
+        switchButton.getStylesheets().add("/css/Button.css");
+        createGroupButton.getStylesheets().add("/css/Button.css");
+        sendButton.getStylesheets().add("/css/Button.css");
         searchBar.textProperty().addListener(o -> handleFilter());
+        searchBar2.textProperty().addListener(o-> handleFilter2());
+        searchBar2.getStylesheets().add("/css/TextField.css");
+        searchBar2.setStyle("-fx-padding: 0.166667em;");
+        createButton.getStylesheets().add("/css/Button.css");
     }
+    @FXML
+    Button newChat;
+    @FXML
+    TextField searchBar2;
 
     private void initModel(){
         searchBar.clear();
@@ -122,7 +153,47 @@ public class MessagesController extends UserController implements Observer<Messa
     @FXML
     private void initializeGroup(){
         tableGroupColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        groupsTableView.getStylesheets().add("/css/TableView.css");
         groupsTableView.setItems(groupModel);
+        this.chatUser.setFont(new Font("Script MT Bold", 20));
+        groupVisible.set(false);
+
+    }
+
+    List<String> users = new ArrayList<String>();
+    final String[] usersToAdd = {""};
+
+    @FXML
+    private void initializeCreateGroup(){
+        tableColumnName1.setCellValueFactory(new PropertyValueFactory<>("fullName"));
+        tableColumnUsername.setCellValueFactory(new PropertyValueFactory<>("userName"));
+        createGroupTableView.getStylesheets().add("/css/TableView.css");
+        this.noChatSelected.setVisible(false);
+        this.chatUser.setFont(new Font("Script MT Bold",16));
+        createGroupTableView.setItems(model);
+
+    }
+
+    @FXML
+    private void initCreateGroupModel(){
+        makeChatBoxInvisible();
+
+    }
+
+    private void makeCreateGroupVisible(){
+        this.createGroupTableView.setVisible(true);
+        this.createButton.setVisible(true);
+        initializeCreateGroup();
+        setList();
+        initCreateGroupModel();
+        this.textMessage.setVisible(true);
+
+    }
+
+    private void makeCreateGroupInvisible(){
+        this.createGroupTableView.setVisible(false);
+        this.textMessage.setVisible(false);
+        this.createButton.setVisible(false);
 
     }
 
@@ -138,11 +209,11 @@ public class MessagesController extends UserController implements Observer<Messa
 
 
     public void setServices(String username){
-        UserDBRepository userDBRepository = new UserDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
-        FriendshipDBRepository friendshipDBRepository = new FriendshipDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
-        FriendRequestDBRepository friendRequestDBRepository = new FriendRequestDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
-        MessageDBRepository messageDBRepository = new MessageDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
-        GroupDBRepository groupDBRepository = new GroupDBRepository("jdbc:postgresql://localhost:5432/socialnetwork", "postgres", "pepenerosu");
+        UserDBRepository userDBRepository = new UserDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
+        FriendshipDBRepository friendshipDBRepository = new FriendshipDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
+        FriendRequestDBRepository friendRequestDBRepository = new FriendRequestDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
+        MessageDBRepository messageDBRepository = new MessageDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
+        GroupDBRepository groupDBRepository = new GroupDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
 
         this.userService = new UserService(userDBRepository, friendshipDBRepository, friendRequestDBRepository);
         this.messageService = new MessageService(userDBRepository,friendshipDBRepository,friendRequestDBRepository,messageDBRepository,groupDBRepository);
@@ -161,6 +232,7 @@ public class MessagesController extends UserController implements Observer<Messa
     private void handleFilter() {
         searchPredicate(searchBar, model, allUsers);
     }
+    private void handleFilter2(){searchGroupPredicate(searchBar,groupModel,allGroups);}
     private void makeChatBoxInvisible(){
         this.noChatSelected.setVisible(true);
         this.chatBox.setVisible(false);
@@ -188,14 +260,26 @@ public class MessagesController extends UserController implements Observer<Messa
                 .collect(Collectors.toList()));
     }
 
+    static void searchGroupPredicate(TextField searchBar, ObservableList<Group> model, List<Group> allGroups){
+        Predicate<Group> p1 = e-> e.getName().toLowerCase().contains(searchBar.getText().toLowerCase());
+        Predicate<Group> p2 = e-> e.getName().toLowerCase().startsWith(searchBar.getText().toLowerCase());
+
+        model.setAll(allGroups
+                .stream()
+                .filter(p1.or(p2))
+                .collect(Collectors.toList()));
+    }
 
     @Override
     public void update(MessageEvent messageEvent) {
-
+        if(friendsBool.get())
+            showConversation();
+        else
+            showGroupConversation();
     }
 
 
-    public void showConversation(ActionEvent actionEvent){
+    public void showConversation(){
         makeChatBoxVisible();
         chatBox.getChildren().clear();
         UserDTO selected = usersTableView.getSelectionModel().getSelectedItem();
@@ -224,7 +308,7 @@ public class MessagesController extends UserController implements Observer<Messa
             try{
                 Message message = new Message(this.currentUsername,List.of(selected.getUserName()),null,textMessage.getText());
                 this.messageService.sendMessage(message);
-                showConversation(actionEvent);
+                //showConversation();
                 this.textMessage.clear();
             }catch (Exception e){
                 e.printStackTrace();
@@ -236,11 +320,19 @@ public class MessagesController extends UserController implements Observer<Messa
     public void makeGroupsInvisible(){
         this.groupsTableView.setVisible(false);
         this.usersTableView.setVisible(true);
+        this.createGroupButton.setVisible(false);
+        this.searchBar2.setVisible(false);
+        this.noChatSelected.setVisible(true);
+        this.chatUser.setFont(new Font("Script MT Bold", 16));
     }
 
     private void makeGroupsVisible(){
         this.usersTableView.setVisible(false);
         this.groupsTableView.setVisible(true);
+        this.createGroupButton.setVisible(true);
+        this.searchBar2.setVisible(true);
+        this.noChatSelected.setVisible(false);
+        this.chatUser.setFont(new Font(12));
         initializeGroup();
         setGroupList();
         initGroupModel();
@@ -255,13 +347,14 @@ public class MessagesController extends UserController implements Observer<Messa
 
     public void chatButtonFunction(ActionEvent actionEvent){
         if(friendsBool.get())
-            showConversation(actionEvent);
+            showConversation();
         else
-            showGroupConversation(actionEvent);
+            showGroupConversation();
 
     }
 
-    public void showGroupConversation(ActionEvent actionEvent){
+    public void showGroupConversation(){
+        makeCreateGroupInvisible();
         selected = groupsTableView.getSelectionModel().getSelectedItem();
         this.chatBox.getChildren().clear();
 
@@ -276,10 +369,14 @@ public class MessagesController extends UserController implements Observer<Messa
         for(MessageDTO messageDTO: conversation){
 
             if(!(messageDTO.getFrom().getId().equals(currentUsername))) {
-                messages.add(new Label(messageDTO.getFrom().getFirstName()+ ": "));
-                messages.get(messages.size()-1).setMaxWidth(Double.MAX_VALUE);
-                messages.get(messages.size()-1).setAlignment(Pos.CENTER_LEFT);
-                messages.get(messages.size()-1).setPadding(new Insets(0,1,-7,0));
+                Label toAdd = new Label(messageDTO.getFrom().getFirstName()+ ": ");
+
+                toAdd.setMaxWidth(Double.MAX_VALUE);
+                toAdd.setAlignment(Pos.CENTER_LEFT);
+                toAdd.setPadding(new Insets(0,1,-7,0));
+                toAdd.setFont(new Font("Arial", 15));
+                toAdd.setStyle("-fx-font-weight: bold");
+                messages.add(toAdd);
                 chatBox.getChildren().add(messages.get(messages.size()-1));
             }
 
@@ -296,24 +393,42 @@ public class MessagesController extends UserController implements Observer<Messa
     }
 
     private void insertChatRows(MessageDTO messageDTO) {
-        messages.add(new Label(messageDTO.getText()));
+        Label toAdd = new Label(messageDTO.getText());
 
-        messages.get(messages.size()-1).setMaxWidth(Double.MAX_VALUE);
 
-        if(messageDTO.getFrom().getId().equals(currentUsername))
-            messages.get(messages.size()-1).setAlignment(Pos.CENTER_RIGHT);
-        else {
-            messages.get(messages.size() - 1).setAlignment(Pos.CENTER_LEFT);
+        Double length = (double) messageDTO.getText().length();
+        toAdd.setMaxWidth(Double.MAX_VALUE);
+        toAdd.setFont(new Font("Arial", 16));
+        if(messageDTO.getFrom().getId().equals(currentUsername)) {
+            toAdd.setAlignment(Pos.CENTER_RIGHT);
+
+            toAdd.getStylesheets().add("/css/LabelForMessages.css");
 
         }
-        chatBox.getChildren().add(messages.get(messages.size()-1));
+        /*
+        -fx-border-width: 2;\n" +
+        "-fx-border-radius: 50px;" +
+                "-fx-border-color: #ffd345;" + "-fx-background-color: #ffe485 ;" + " -fx-background-radius: 50px;" + "-fx-opacity: 0.7;");
+
+         */
+        else {
+            toAdd.setAlignment(Pos.CENTER_LEFT);
+            toAdd.getStylesheets().add("/css/LabelForFriendMessages.css");
+
+        }
+        messages.add(toAdd);
+        chatBox.getChildren().add(toAdd);
     }
 
     private void switchUsers(ActionEvent actionEvent){
         makeChatBoxInvisible();
         makeGroupsInvisible();
+        makeCreateGroupInvisible();
+        this.chatUser.setVisible(false);
+        this.noChatSelected.setVisible(false);
         this.switchButton.setText("Groups");
         this.friendsBool.set(true);
+        initModel();
     }
 
     public void switchButtonFunction(ActionEvent actionEvent){
@@ -329,7 +444,7 @@ public class MessagesController extends UserController implements Observer<Messa
             try{
                 Message message = new Message(this.currentUsername,List.of(selected.getId().toString()),null,textMessage.getText());
                 messageService.sendAGroupMessage(message);
-                showGroupConversation(actionEvent);
+                //showGroupConversation();
                 this.textMessage.clear();
             }catch(Exception e){
                 e.printStackTrace();
@@ -343,6 +458,67 @@ public class MessagesController extends UserController implements Observer<Messa
             sendMessage(actionEvent);
         else
             sendGroupMessage(actionEvent);
+    }
+
+    public void switchCreateGroup(ActionEvent actionEvent){
+        makeCreateGroupVisible();
+        createGroupButton.setText(" - ");
+        groupVisible.set(true);
+    }
+    AtomicBoolean groupVisible = new AtomicBoolean();
+
+
+    private void switchCreateGroupReverse(ActionEvent actionEvent){
+        makeCreateGroupInvisible();
+        createGroupButton.setText("+");
+        groupVisible.set(false);
+        chatUser.setVisible(false);
+    }
+
+    public void switchCreateGroupButton(ActionEvent actionEvent){
+        if(!(groupVisible.get()))
+            switchCreateGroup(actionEvent);
+        else
+            switchCreateGroupReverse(actionEvent);
+
+    }
+
+    public void createNewGroup(ActionEvent actionEvent){
+        if(!Objects.equals(this.textMessage.getText(), "") || usersToAdd[0].length() < 1){
+            try{
+                Group group = new Group(textMessage.getText());
+                users.add(currentUsername);
+                group.setUsers(this.users);
+                this.messageService.createAGroup(group);
+                this.textMessage.clear();
+                this.chatUser.setText("");
+                setGroupList();
+                initGroupModel();
+                users.clear();
+                usersToAdd[0] = "";
+                makeCreateGroupInvisible();
+
+            }catch (Exception e){
+               MessageAlert.showErrorMessage(null,e.getMessage());
+            }
+        }else{
+            MessageAlert.showErrorMessage(null, "Please provide a name or select users.");
+        }
+    }
+
+    @FXML
+    private void handleRowSelect(){
+        UserDTO row = createGroupTableView.getSelectionModel().getSelectedItem();
+        if(row == null) return;
+        for(String user : this.users){
+            if(row.getUserName().equals(user))
+                return;
+        }
+
+        users.add(row.getUserName());
+        System.out.println(users);
+        usersToAdd[0] += (row.getFullName() + " ");
+        this.chatUser.setText(Arrays.toString(usersToAdd));
     }
 
 

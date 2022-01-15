@@ -1,6 +1,8 @@
 package socialnetwork.model;
 
 
+import socialnetwork.utils.Constants;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -10,6 +12,7 @@ public class MessageDTO extends Entity<Long>{
     private LocalDateTime date;
     private MessageDTO reply;
     private String text;
+    private String fullName;
 
     public MessageDTO(User from, List<User> to, LocalDateTime date, MessageDTO reply, String text) {
         this.from = from;
@@ -17,6 +20,7 @@ public class MessageDTO extends Entity<Long>{
         this.date = date;
         this.reply = reply;
         this.text = text;
+        this.fullName = from.getFirstName()+ " " + from.getLastName();
     }
 
     public User getFrom() {
@@ -35,8 +39,8 @@ public class MessageDTO extends Entity<Long>{
         this.to = to;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public String getDate() {
+        return date.format(Constants.DATE_TIME_FORMATTER);
     }
 
     public void setDate(LocalDateTime date) {
@@ -57,6 +61,14 @@ public class MessageDTO extends Entity<Long>{
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     @Override

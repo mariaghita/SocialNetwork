@@ -1,0 +1,17 @@
+
+.label{
+    -fx-border-width: 2;
+    -fx-border-radius: 50px;
+    -fx-border-color: #ffd345;
+    -fx-background-color: #ffe485;
+    -fx-background-radius: 50px;
+    -fx-opacity: 0.7;
+    -fx-text-fill: black;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+
+}
+
+.label .label{
+    -fx-opacity: 1;
+}

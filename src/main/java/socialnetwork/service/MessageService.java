@@ -9,7 +9,7 @@ import socialnetwork.model.validators.MessageValidator;
 import socialnetwork.model.validators.ValidationException;
 import socialnetwork.model.validators.Validator;
 import socialnetwork.repository.db.*;
-import socialnetwork.utils.events.MessageEvent;
+import socialnetwork.utils.events.*;
 import socialnetwork.utils.observer.Observable;
 import socialnetwork.utils.observer.Observer;
 
@@ -64,6 +64,7 @@ public class MessageService implements Observable<MessageEvent> {
 
 
         messageDBRepository.save(message);
+        notifyObservers(new MessageEvent(MessageEventType.NEW_DM, message));
     }
 
     /**
@@ -134,16 +135,7 @@ public class MessageService implements Observable<MessageEvent> {
         return convertMessagesWithoutOriginal(result);
     }
 
-    /**
-     * finds all messages that have more than 1 recipients  - used for replyAll function
-     * @param username - the username of the user who is seeing the messages
-     * @return list of messages which fulfill the criteria
-     */
-    public List<MessageDTO> findGroupMessages(String username, String pieceOfMessage){
-        List<Group> groups = getGroupsOfAUser(username);
-        //todo
-        return null;
-    }
+
 
     /**
      * function to convert messages to messageDTO without getting the original message - used for reply functions
@@ -179,6 +171,7 @@ public class MessageService implements Observable<MessageEvent> {
         message.setDate(date);
         foundGroup.getMessages().add(message);
         groupDBRepository.update(foundGroup);
+        notifyObservers(new MessageEvent(MessageEventType.NEW_GROUP_CHAT, message));
     }
 
     public List<MessageDTO> getGroupConversation(Long groupID){
@@ -206,21 +199,61 @@ public class MessageService implements Observable<MessageEvent> {
             if(userDBRepository.findOne(user) == null)
                 throw new ValidationException("one of the users does not exist");
         groupDBRepository.save(group);
+
     }
 
-    private List<Observer<MessageEvent>> observers = new ArrayList<>();
+    public List<MessageDTO> findMessagesFromDate(LocalDateTime startDate, LocalDateTime endDate, String loggedUser){
+        Iterable<Message> privateMessages = messageDBRepository.findAll();
+        Iterable<Group> groupMessages = getGroupsOfAUser(loggedUser);
+
+        List<Message> result = new ArrayList<Message>();
+
+        privateMessages.forEach(message -> {
+            if(!(message.getFrom().equals(loggedUser))){
+                if(message.getDate().isAfter(startDate) && message.getDate().isBefore(endDate))
+                    result.add(message);
+            }
+        });
+
+        groupMessages.forEach(group -> {
+            group.getMessages().forEach(message -> {
+                if(message.getDate().isAfter(startDate) && message.getDate().isBefore(endDate))
+                    result.add(message);
+            });
+        });
+
+        return convertMessagesWithoutOriginal(result);
+    }
+
+    public List<MessageDTO> findFriendMessagesFromDate(LocalDateTime startDate, LocalDateTime endDate,  String friendUser, String loggedUser){
+        Iterable<Message> privateMessages = messageDBRepository.findAll();
+        List<Message> result = new ArrayList<Message>();
+
+        privateMessages.forEach(message -> {
+            if(message.getFrom().equals(friendUser) && message.getTo().contains(loggedUser))
+                if(message.getDate().isAfter(startDate) && message.getDate().isBefore(endDate))
+                    result.add(message);
+        });
+
+        return convertMessagesWithoutOriginal(result);
+    }
+
+
+    private List<Observer<MessageEvent>> messageObservers = new ArrayList<>();
+
     @Override
     public void addObserver(Observer<MessageEvent> e) {
-        observers.add(e);
+        messageObservers.add(e);
     }
+
 
     @Override
     public void removeObserver(Observer<MessageEvent> e) {
-        observers.remove(e);
+        messageObservers.remove(e);
     }
 
     @Override
     public void notifyObservers(MessageEvent t) {
-        observers.forEach(x -> x.update(t));
+        messageObservers.forEach(x -> x.update(t));
     }
 }

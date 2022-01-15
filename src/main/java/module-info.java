@@ -6,6 +6,8 @@ module socialnetwork {
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
+    requires java.desktop;
+    requires org.apache.pdfbox;
 
     opens socialnetwork to javafx.fxml;
     exports socialnetwork;
@@ -15,4 +17,6 @@ module socialnetwork {
 
     opens socialnetwork.model to javafx.fxml;
     exports socialnetwork.model;
+
+
 }
