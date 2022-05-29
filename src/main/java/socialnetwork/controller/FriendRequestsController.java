@@ -7,9 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import socialnetwork.Main;
@@ -41,64 +39,90 @@ public class FriendRequestsController extends UserController implements Observer
     TableColumn<FriendRequestDTO, String> tableColumnDate;
 
     @FXML
-    private void initialize(){
-        tableColumnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        tableColumnLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-        tableColumnStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-        tableColumnDate.setCellValueFactory(new PropertyValueFactory<>("dateTime"));
-        friendRequestTableView.setItems(model);
-    }
+    private Pagination paginationFriendRequests;
 
-    private void initModel(){
-        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.findFriendRequestToUser(currentUsername);
-        System.out.println(friendRequestDTOS);
-        model.setAll(friendRequestDTOS);
-    }
+    @FXML
+    private Label status;
 
     public FriendRequestsController() {
         super();
     }
 
-    public void setServices(){
+    @FXML
+    private void initialize(){
+        tableColumnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        tableColumnLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        tableColumnStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        tableColumnDate.setCellValueFactory(new PropertyValueFactory<>("dateTime"));
+        paginationFriendRequests.setPageFactory(this::createPage);
+        friendRequestTableView.setItems(model);
+    }
 
+    /*
+    private void initModel(){
+        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.findFriendRequestToUser(currentUsername);
+        System.out.println(friendRequestDTOS);
+        model.setAll(friendRequestDTOS);
+    }
+    */
+
+    private Node createPage(Integer page) {
+        int fromIndex = page * 5;
+        int toIndex = Math.min(fromIndex + 5, model.size());
+        friendRequestTableView.setItems(FXCollections.observableArrayList(initModel(page)));
+        return friendRequestTableView;
+    }
+
+    private List<FriendRequestDTO> initModel(int page) {
+        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.getFriendRequestsOnPage(page, currentUsername);
+        model.setAll(friendRequestDTOS);
+        return friendRequestDTOS;
+    }
+
+
+    public void setServices(){
         UserDBRepository userDBRepository = new UserDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
         FriendshipDBRepository friendshipDBRepository = new FriendshipDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
         FriendRequestDBRepository friendRequestDBRepository = new FriendRequestDBRepository("jdbc:postgresql://localhost:5432/gitdatabse", "postgres", "0705");
 
         this.friendRequestService = new FriendRequestService(userDBRepository, friendshipDBRepository, friendRequestDBRepository);
         friendRequestService.addObserver(this);
-        initModel();
+        paginationFriendRequests.setPageFactory(this::createPage);
+        //initModel();
     }
 
     public void acceptFriendRequest(ActionEvent actionEvent){
+        String message = "";
         FriendRequestDTO selected = friendRequestTableView.getSelectionModel().getSelectedItem();
         if(selected!=null){
             try{
                 friendRequestService.acceptFriendRequest(selected.getUsername(), currentUsername);
-                String message = "You are now friends with "+ selected.getFirstName() + " " + selected.getLastName() + ".";
-                MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Accept", message);
+                message = "You are now friends with "+ selected.getFirstName() + " " + selected.getLastName() + ".";
             }catch (Exception e){
-                MessageAlert.showErrorMessage(null, e.getMessage());
+                message = e.getMessage();
             }
         }else
-            MessageAlert.showErrorMessage(null, "No user selected!");
+            message = "No user selected!";
+        status.setText(message);
     }
+
     public void declineFriendRequest(ActionEvent actionEvent){
+        String message = "";
         FriendRequestDTO selected = friendRequestTableView.getSelectionModel().getSelectedItem();
         if(selected!=null){
             try{
                 friendRequestService.declineFriendRequest(selected.getUsername(), currentUsername);
-                String message = "Friend request from " + selected.getFirstName() + " " + selected.getLastName() + " declined.";
-                MessageAlert.showMessage(null,Alert.AlertType.INFORMATION, "Decline", message);
+                message = "Friend request from " + selected.getFirstName() + " " + selected.getLastName() + " declined.";
             }catch (Exception e){
-                MessageAlert.showErrorMessage(null,e.getMessage());
+                message = e.getMessage();
             }
         }else
-            MessageAlert.showErrorMessage(null,"No user selected!");
+            message = "No user selected!";
+        status.setText(message);
     }
     @Override
     public void update(FriendRequestEvent friendshipEvent) {
-        initModel();
+        paginationFriendRequests.setPageFactory(this::createPage);
     }
 
     public void switchManageSentFriendRequests(ActionEvent event) throws IOException {

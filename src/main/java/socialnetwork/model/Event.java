@@ -7,14 +7,14 @@ public class Event extends Entity<Long> {
     private String name;
     private LocalDateTime date;
     private String host;
-    private Integer duration;
+    private String description;
     private String location;
 
-    public Event(String name, LocalDateTime date, String host, int duration, String location) {
+    public Event(String name, LocalDateTime date, String host, String description, String location) {
         this.name = name;
         this.date = date;
         this.host = host;
-        this.duration = duration;
+        this.description = description;
         this.location = location;
     }
 
@@ -42,14 +42,6 @@ public class Event extends Entity<Long> {
         this.host = host;
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
     public String getLocation() {
         return location;
     }
@@ -58,12 +50,20 @@ public class Event extends Entity<Long> {
         this.location = location;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
-        return getDuration() == event.getDuration() && getId().equals(event.getId()) && getName().equals(event.getName()) && getDate().equals(event.getDate()) && getHost().equals(event.getHost()) && Objects.equals(getLocation(), event.getLocation());
+        return getDescription().equals(event.getDescription()) && getId().equals(event.getId()) && getName().equals(event.getName()) && getDate().equals(event.getDate()) && getHost().equals(event.getHost()) && Objects.equals(getLocation(), event.getLocation());
     }
 
     @Override
@@ -73,7 +73,7 @@ public class Event extends Entity<Long> {
                 ", name='" + name + '\'' +
                 ", date=" + date +
                 ", host='" + host + '\'' +
-                ", duration=" + duration +
+                ", description=" + description +
                 ", location='" + location + '\'' +
                 '}';
     }

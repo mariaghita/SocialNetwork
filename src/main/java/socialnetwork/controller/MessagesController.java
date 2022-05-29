@@ -101,7 +101,7 @@ public class MessagesController extends UserController implements Observer<Messa
     @FXML
     private void initialize(){
         tableColumnName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
-        usersTableView.getStylesheets().add("/css/TableView.css");
+        usersTableView.getStylesheets().add("/css/tableviews.css");
         usersTableView.setItems(model);
 
         this.scroller.getStylesheets().add("/css/ScrollPane.css");
@@ -114,19 +114,20 @@ public class MessagesController extends UserController implements Observer<Messa
         this.createGroupTableView.setVisible(false);
         this.chatUser.setFont(new Font("Script MT Bold", 30));
         this.noChatSelected.setFont(new Font("Script MT Bold", 40));
-        this.textMessage.getStylesheets().add("/css/TextField.css");
+        this.textMessage.getStylesheets().add("/css/textfields.css");
         textMessage.setStyle("-fx-padding: 10 0 0 0");
         this.createButton.setVisible(false);
         makeGroupsInvisible();
-        searchBar.getStylesheets().add("/css/TextField.css");
+        searchBar.getStylesheets().add("/css/textfields.css");
         searchBar.setStyle("-fx-padding: 0.166667em;");
         newChat.getStylesheets().add("/css/Button.css");
         switchButton.getStylesheets().add("/css/Button.css");
         createGroupButton.getStylesheets().add("/css/Button.css");
         sendButton.getStylesheets().add("/css/Button.css");
+        searchBar.setVisible(true);
         searchBar.textProperty().addListener(o -> handleFilter());
         searchBar2.textProperty().addListener(o-> handleFilter2());
-        searchBar2.getStylesheets().add("/css/TextField.css");
+        searchBar2.getStylesheets().add("/css/textfields.css");
         searchBar2.setStyle("-fx-padding: 0.166667em;");
         createButton.getStylesheets().add("/css/Button.css");
     }
@@ -139,6 +140,8 @@ public class MessagesController extends UserController implements Observer<Messa
         searchBar.clear();
         makeChatBoxInvisible();
         model.setAll(allUsers);
+        searchBar2.setVisible(false);
+        searchBar.setVisible(true);
 
     }
 
@@ -153,10 +156,12 @@ public class MessagesController extends UserController implements Observer<Messa
     @FXML
     private void initializeGroup(){
         tableGroupColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        groupsTableView.getStylesheets().add("/css/TableView.css");
+        groupsTableView.getStylesheets().add("/css/tableviews.css");
         groupsTableView.setItems(groupModel);
         this.chatUser.setFont(new Font("Script MT Bold", 20));
         groupVisible.set(false);
+        searchBar.setVisible(false);
+        searchBar2.setVisible(true);
 
     }
 
@@ -167,7 +172,7 @@ public class MessagesController extends UserController implements Observer<Messa
     private void initializeCreateGroup(){
         tableColumnName1.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         tableColumnUsername.setCellValueFactory(new PropertyValueFactory<>("userName"));
-        createGroupTableView.getStylesheets().add("/css/TableView.css");
+        createGroupTableView.getStylesheets().add("/css/tableviews.css");
         this.noChatSelected.setVisible(false);
         this.chatUser.setFont(new Font("Script MT Bold",16));
         createGroupTableView.setItems(model);
@@ -405,12 +410,7 @@ public class MessagesController extends UserController implements Observer<Messa
             toAdd.getStylesheets().add("/css/LabelForMessages.css");
 
         }
-        /*
-        -fx-border-width: 2;\n" +
-        "-fx-border-radius: 50px;" +
-                "-fx-border-color: #ffd345;" + "-fx-background-color: #ffe485 ;" + " -fx-background-radius: 50px;" + "-fx-opacity: 0.7;");
 
-         */
         else {
             toAdd.setAlignment(Pos.CENTER_LEFT);
             toAdd.getStylesheets().add("/css/LabelForFriendMessages.css");
@@ -464,12 +464,14 @@ public class MessagesController extends UserController implements Observer<Messa
         makeCreateGroupVisible();
         createGroupButton.setText(" - ");
         groupVisible.set(true);
+        noChatSelected.setVisible(false);
     }
     AtomicBoolean groupVisible = new AtomicBoolean();
 
 
     private void switchCreateGroupReverse(ActionEvent actionEvent){
         makeCreateGroupInvisible();
+        noChatSelected.setVisible(true);
         createGroupButton.setText("+");
         groupVisible.set(false);
         chatUser.setVisible(false);

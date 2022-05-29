@@ -97,8 +97,8 @@ public class ReportsController extends UserController implements Observer<Friend
         generatePdfButton.getStylesheets().add("/css/Button.css");
         switchReportButton.getStylesheets().add("/css/Button.css");
         generateReport.getStylesheets().add("/css/Button.css");
-        friendsReport.getStylesheets().add("/css/TableView.css");
-        messagesReport.getStylesheets().add("/css/TableView.css");
+        friendsReport.getStylesheets().add("/css/tableviews.css");
+        messagesReport.getStylesheets().add("/css/tableviews.css");
         beginDatePicker.getStylesheets().add("/css/DatePicker.css");
         endDatePicker.getStylesheets().add("/css/DatePicker.css");
         friendsReport.setItems(friendsModel);

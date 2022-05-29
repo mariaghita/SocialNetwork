@@ -2,11 +2,14 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.EventsController">
    <left>
@@ -78,35 +81,53 @@
    <top>
       <AnchorPane prefHeight="58.0" prefWidth="750.0" style="-fx-background-color: #ffd345;" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="32.0" fitWidth="176.0" layoutX="53.0" layoutY="21.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="28.0" fitWidth="116.0" layoutX="52.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/document_2.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="77.0" fitWidth="50.0" layoutX="14.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="59.0" fitWidth="51.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/sunlit1.png" />
                </image>
             </ImageView>
-            <Button fx:id="manageNotifications" layoutX="532.0" layoutY="-1.0" mnemonicParsing="false" onAction="#switchManageNotifications" prefHeight="72.0" prefWidth="218.0" style="-fx-background-color: #ffd345;">
+            <Button fx:id="manageNotifications" layoutX="579.0" layoutY="26.0" mnemonicParsing="false" onAction="#switchManageNotifications" prefHeight="46.0" prefWidth="167.0" style="-fx-background-color: #ffd345;">
                <graphic>
-                  <ImageView fitHeight="48.0" fitWidth="201.0">
+                  <ImageView fitHeight="35.0" fitWidth="153.0">
                      <image>
                         <Image url="@../images/notifications.png" />
                      </image>
                   </ImageView>
                </graphic></Button>
+            <Button fx:id="exit" layoutX="701.0" layoutY="-1.0" mnemonicParsing="false" onAction="#exitApp" prefHeight="26.0" prefWidth="50.0" stylesheets="@../css/exit.css" />
          </children>
       </AnchorPane>
    </top>
    <center>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" stylesheets="@../css/buttons.css" BorderPane.alignment="CENTER">
          <children>
             <ImageView fitHeight="429.0" fitWidth="564.0" layoutY="-1.0">
                <image>
                   <Image url="@../images/bg3.png" />
                </image>
             </ImageView>
+            <Pagination fx:id="paginationEvents" layoutX="59.0" layoutY="85.0" maxPageIndicatorCount="3" prefHeight="273.0" prefWidth="442.0" stylesheets="@../css/pagination.css" />
+            <TableView fx:id="tableViewEvents" layoutX="60.0" layoutY="85.0" prefHeight="198.0" prefWidth="442.0" stylesheets="@../css/tableviews.css">
+              <columns>
+                  <TableColumn fx:id="tableColumnName" prefWidth="155.20001983642578" text="Name" />
+                <TableColumn fx:id="tableColumnDate" prefWidth="126.4000244140625" text="On" />
+                  <TableColumn fx:id="tableColumnDays" prefWidth="157.59991455078125" text="Location" />
+              </columns>
+            </TableView>
+            <Button fx:id="myEvents" layoutX="453.0" layoutY="6.0" mnemonicParsing="false" onAction="#switchMyEvents" text="My events" />
+            <Button fx:id="subscribe" layoutX="346.0" layoutY="384.0" mnemonicParsing="false" onAction="#eventSubscribe" prefHeight="22.0" prefWidth="98.0" text="Subscribe" />
+            <Button fx:id="newEvent" layoutX="1.0" layoutY="380.0" mnemonicParsing="false" onAction="#switchNewEvent" prefHeight="46.0" prefWidth="162.0" text="Organize an event" />
+            <Button fx:id="unsubscribe" layoutX="445.0" layoutY="384.0" mnemonicParsing="false" onAction="#eventUnsubscribe" prefHeight="21.0" prefWidth="118.0" text="Unsubscribe" />
+            <Label fx:id="status" alignment="CENTER" contentDisplay="CENTER" layoutX="91.0" layoutY="50.0" prefHeight="18.0" prefWidth="379.0" textAlignment="CENTER">
+               <font>
+                  <Font name="Script MT Bold" size="14.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </center>

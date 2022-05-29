@@ -3,14 +3,21 @@ package socialnetwork.service;
 import socialnetwork.model.*;
 import socialnetwork.model.validators.*;
 import socialnetwork.repository.db.*;
+import socialnetwork.repository.paging.Page;
+import socialnetwork.repository.paging.Pageable;
+import socialnetwork.repository.paging.PageableImplementation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class UserService {
     private final UserDBRepository userDBRepository;
     private final FriendshipDBRepository friendshipDBRepository;
     private final FriendRequestDBRepository friendRequestDBRepository;
+    private int page = 0;
+    private int size = 5;
 
     public UserService(UserDBRepository userDBRepository,FriendshipDBRepository friendshipDBRepository, FriendRequestDBRepository friendRequestDBRepository) {
         this.userDBRepository = userDBRepository;
@@ -36,7 +43,7 @@ public class UserService {
      *deletes an existing user
      * @param username the username of the user we want to delete
      */
-    public void removeUser(String username){
+    public void removeUser(String username) {
         if(username == null)
             throw new ValidationException("Invalid username!\n");
 
@@ -87,7 +94,7 @@ public class UserService {
     /**
      *displays the community with the most users
      */
-    public void largestCommunity(){
+    public void largestCommunity() {
         var rez = new Object() {
             int maxUsers = 0;
         };
@@ -121,6 +128,34 @@ public class UserService {
 
     public Iterable<User> getAll() {
         return userDBRepository.findAll();
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public List<UserDTO>getUsersOnPage(int page, String username, String str) {
+        this.page = page;
+        Pageable pageable = new PageableImplementation(page,this.size);
+        Page<User> userPage = userDBRepository.findAllExceptCurrentWithString(pageable, username, str);
+
+        return StreamSupport.stream(userPage.getContent().spliterator(), false)
+                .map(e -> new UserDTO(e.getId(), e.getFirstName(), e.getLastName(), null))
+                .collect(Collectors.toList());
+    }
+    public List<UserDTO>getUsersOnPage0(int page, String username) {
+        this.page = page;
+        Pageable pageable = new PageableImplementation(page,this.size);
+        Page<User> userPage = userDBRepository.findAllExceptCurrent(pageable, username);
+
+        return StreamSupport.stream(userPage.getContent().spliterator(), false)
+                .map(e -> new UserDTO(e.getId(), e.getFirstName(), e.getLastName(), null))
+                .collect(Collectors.toList());
+    }
+
+    public List<UserDTO> getNextPageUsers(String username, String str) {
+        this.page++;
+        return getUsersOnPage(this.page, username, str);
     }
 }
 

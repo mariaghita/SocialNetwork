@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.MyEventsController">
+        <left>
+            <AnchorPane prefHeight="338.0" prefWidth="181.0" style="-fx-background-color: ffe485;" BorderPane.alignment="CENTER">
+                <children>
+                    <Button fx:id="manageFriendRequests" layoutY="161.0" mnemonicParsing="false" onAction="#switchManageFriendRequests" prefHeight="38.0" prefWidth="186.0" style="-fx-background-color: ffe485;">
+                        <graphic>
+                            <ImageView fitHeight="38.0" fitWidth="126.0">
+                                <image>
+                                    <Image url="@../images/connect.png" />
+                                </image>
+                            </ImageView>
+                        </graphic></Button>
+                    <Button fx:id="manageFriends" layoutY="109.0" mnemonicParsing="false" onAction="#switchManageFriends" prefHeight="39.0" prefWidth="186.0" style="-fx-background-color: ffe485;">
+                        <graphic>
+                            <ImageView fitHeight="51.0" fitWidth="170.0">
+                                <image>
+                                    <Image url="@../images/your_friends.png" />
+                                </image>
+                            </ImageView>
+                        </graphic></Button>
+                    <Button fx:id="manageDiscover" layoutX="1.0" layoutY="206.0" mnemonicParsing="false" onAction="#switchManageDiscover" prefHeight="45.0" prefWidth="183.0" style="-fx-background-color: ffe485;">
+                        <graphic>
+                            <ImageView fitHeight="39.0" fitWidth="113.0">
+                                <image>
+                                    <Image url="@../images/discover.png" />
+                                </image>
+                            </ImageView>
+                        </graphic></Button>
+                    <Button layoutX="-1.0" layoutY="379.0" mnemonicParsing="false" onAction="#userLogout" prefHeight="46.0" prefWidth="184.0" style="-fx-background-color: ffe485;">
+                        <graphic>
+                            <ImageView fitHeight="36.0" fitWidth="122.0">
+                                <image>
+                                    <Image url="@../images/logout.png" />
+                                </image>
+                            </ImageView>
+                        </graphic></Button>
+                    <Button fx:id="manageEvents" layoutY="291.0" mnemonicParsing="false" onAction="#switchManageEvents" prefHeight="44.0" prefWidth="184.0" style="-fx-background-color: ffe485;">
+                        <graphic>
+                            <ImageView fitHeight="29.0" fitWidth="105.0">
+                                <image>
+                                    <Image url="@../images/events.png" />
+                                </image>
+                            </ImageView>
+                        </graphic></Button>
+                    <Button fx:id="manageMessages" layoutX="-1.0" layoutY="252.0" mnemonicParsing="false" onAction="#switchManageMessages" prefHeight="39.0" prefWidth="184.0" style="-fx-background-color: ffe485;">
+                        <graphic>
+                            <ImageView fitHeight="33.0" fitWidth="143.0">
+                                <image>
+                                    <Image url="@../images/messages.png" />
+                                </image>
+                            </ImageView>
+                        </graphic></Button>
+                    <Label fx:id="currentUser" alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" prefHeight="28.0" prefWidth="182.0" textAlignment="CENTER">
+                        <font>
+                            <Font name="Script MT Bold" size="12.0" />
+                        </font></Label>
+                    <Button fx:id="manageReports" layoutX="3.0" layoutY="335.0" mnemonicParsing="false" onAction="#switchManageReports" prefHeight="35.0" prefWidth="178.0" style="-fx-background-color: ffe485;">
+                        <graphic>
+                            <ImageView fitHeight="35.0" fitWidth="108.0">
+                                <image>
+                                    <Image url="@../images/reports.png" />
+                                </image>
+                            </ImageView>
+                        </graphic></Button>
+                </children>
+            </AnchorPane>
+        </left>
+        <top>
+            <AnchorPane prefHeight="58.0" prefWidth="750.0" style="-fx-background-color: #ffd345;" BorderPane.alignment="CENTER">
+                <children>
+                    <ImageView fitHeight="28.0" fitWidth="116.0" layoutX="52.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/document_2.png" />
+                        </image>
+                    </ImageView>
+                    <ImageView fitHeight="59.0" fitWidth="51.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/sunlit1.png" />
+                        </image>
+                    </ImageView>
+                    <Button fx:id="manageNotifications" layoutX="579.0" layoutY="26.0" mnemonicParsing="false" onAction="#switchManageNotifications" prefHeight="46.0" prefWidth="167.0" style="-fx-background-color: #ffd345;">
+                        <graphic>
+                            <ImageView fitHeight="35.0" fitWidth="153.0">
+                                <image>
+                                    <Image url="@../images/notifications.png" />
+                                </image>
+                            </ImageView>
+                        </graphic></Button>
+                    <Button fx:id="exit" layoutX="701.0" layoutY="-1.0" mnemonicParsing="false" onAction="#exitApp" prefHeight="26.0" prefWidth="50.0" stylesheets="@../css/exit.css" />
+                </children>
+            </AnchorPane>
+        </top>
+        <center>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" stylesheets="@../css/buttons.css" BorderPane.alignment="CENTER">
+                <children>
+                    <ImageView fitHeight="429.0" fitWidth="564.0" layoutY="-1.0">
+                        <image>
+                            <Image url="@../images/bg3.png" />
+                        </image>
+                    </ImageView>
+                    <Pagination fx:id="paginationEvents" layoutX="59.0" layoutY="98.0" maxPageIndicatorCount="3" prefHeight="260.0" prefWidth="446.0" stylesheets="@../css/pagination.css" />
+                    <TableView fx:id="tableViewEvents" layoutX="60.0" layoutY="101.0" prefHeight="182.0" prefWidth="446.0" stylesheets="@../css/tableviews.css">
+                        <columns>
+                            <TableColumn fx:id="tableColumnName" prefWidth="155.20001983642578" text="Name" />
+                            <TableColumn fx:id="tableColumnDate" prefWidth="126.4000244140625" text="On" />
+                            <TableColumn fx:id="tableColumnDays" prefWidth="160.7999267578125" text="Location" />
+                        </columns>
+                    </TableView>
+                    <Button fx:id="switchEvents" layoutX="1.0" layoutY="380.0" mnemonicParsing="false" onAction="#switchManageEvents" prefHeight="46.0" prefWidth="135.0" text="Back to events" />
+                    <Button fx:id="unsubscribe" layoutX="445.0" layoutY="384.0" mnemonicParsing="false" onAction="#eventUnsubscribe" prefHeight="21.0" prefWidth="118.0" text="Unsubscribe" />
+            <Button fx:id="turnOn" layoutX="332.0" layoutY="377.0" mnemonicParsing="false" onAction="#eventOn" prefHeight="51.0" prefWidth="58.0">
+               <graphic>
+                  <ImageView fitHeight="35.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/notif_on.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="turnOff" layoutX="391.0" layoutY="379.0" mnemonicParsing="false" onAction="#eventOff" prefHeight="45.0" prefWidth="53.0">
+               <graphic>
+                  <ImageView fitHeight="33.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/turn-notifications-off-button.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Label fx:id="status" alignment="CENTER" layoutX="62.0" layoutY="70.0" prefHeight="18.0" prefWidth="438.0">
+               <font>
+                  <Font name="Script MT Bold" size="14.0" />
+               </font>
+            </Label>
+                </children>
+            </AnchorPane>
+        </center>
+</BorderPane>

@@ -1,0 +1,18 @@
+.date-picker{
+    -fx-background-color: transparent;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-border-color: black;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+
+date-picker .filler {
+    -fx-background-color: transparent;
+}
+
+date-picker .corner {
+    -fx-background-color: transparent;
+}

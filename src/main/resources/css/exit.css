@@ -1,0 +1,11 @@
+#exit {
+    -fx-background-color: orange;
+    content: "\00d7";
+    opacity: 0.6;
+    border: none;
+    border-radius: 50%;
+}
+
+#exit:hover{background-color:red; opacity: 1}
+
+#exit:focused{background-color:red;}

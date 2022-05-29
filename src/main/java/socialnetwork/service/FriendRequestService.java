@@ -3,6 +3,9 @@ package socialnetwork.service;
 import socialnetwork.model.*;
 import socialnetwork.model.validators.*;
 import socialnetwork.repository.db.*;
+import socialnetwork.repository.paging.Page;
+import socialnetwork.repository.paging.Pageable;
+import socialnetwork.repository.paging.PageableImplementation;
 import socialnetwork.utils.events.FriendRequestEvent;
 import socialnetwork.utils.events.FriendRequestEventType;
 import socialnetwork.utils.observer.Observable;
@@ -18,6 +21,8 @@ public class FriendRequestService implements Observable<FriendRequestEvent> {
     private final UserDBRepository userDBRepository;
     private final FriendshipDBRepository friendshipDBRepository;
     private final FriendRequestDBRepository friendRequestDBRepository;
+    private int page = 0;
+    private int size = 5;
 
     public FriendRequestService(UserDBRepository userDBRepository, FriendshipDBRepository friendshipDBRepository, FriendRequestDBRepository friendRequestDBRepository) {
         this.userDBRepository = userDBRepository;
@@ -141,7 +146,6 @@ public class FriendRequestService implements Observable<FriendRequestEvent> {
         friendshipDBRepository.save(friendship);
         friendRequestDBRepository.delete(new Tuple<>(username1, username2));
 
-        //aici trebuie observator si pentru friendship si pentru friendrequest?
         FriendRequest oldFriendRequest = new FriendRequest(username1, username2);
         notifyObservers(new FriendRequestEvent(FriendRequestEventType.APPROVED, oldFriendRequest));
     }
@@ -209,5 +213,51 @@ public class FriendRequestService implements Observable<FriendRequestEvent> {
     @Override
     public void notifyObservers(FriendRequestEvent e) {
         observers.forEach(x -> x.update(e));
+    }
+
+    //TODO metoda de paginare
+
+    public int getPage() {
+        return page;
+    }
+
+    public List<FriendRequestDTO>getSentFriendRequestsOnPage(int page, String username) {
+        this.page = page;
+        Pageable pageable = new PageableImplementation(page,this.size);
+        Page<FriendRequest> sentFriendRequestsPage = friendRequestDBRepository.findAllFrom(pageable, username);
+
+        List<FriendRequestDTO> result = new ArrayList<FriendRequestDTO>();
+        sentFriendRequestsPage.getContent().forEach(x->{
+            User foundUser = userDBRepository.findOne(x.getId().getSecond());
+            FriendRequestDTO friendRequestDTO = new FriendRequestDTO(foundUser.getFirstName(),foundUser.getLastName(),x.getLocalDateTime());
+            friendRequestDTO.setUsername(foundUser.getId());
+            result.add(friendRequestDTO);
+        });
+        return result;
+    }
+
+    public List<FriendRequestDTO> getNextSentFriendRequestsUsers(String username) {
+        this.page++;
+        return getSentFriendRequestsOnPage(this.page, username);
+    }
+
+    public List<FriendRequestDTO>getFriendRequestsOnPage(int page, String username) {
+        this.page = page;
+        Pageable pageable = new PageableImplementation(page,this.size);
+        Page<FriendRequest> sentFriendRequestsPage = friendRequestDBRepository.findAllTo(pageable, username);
+
+        List<FriendRequestDTO> result = new ArrayList<FriendRequestDTO>();
+        sentFriendRequestsPage.getContent().forEach(x->{
+            User foundUser = userDBRepository.findOne(x.getId().getFirst());
+            FriendRequestDTO friendRequestDTO = new FriendRequestDTO(foundUser.getFirstName(),foundUser.getLastName(),x.getLocalDateTime());
+            friendRequestDTO.setUsername(foundUser.getId());
+            result.add(friendRequestDTO);
+        });
+        return result;
+    }
+
+    public List<FriendRequestDTO> getNextFriendRequestsUsers(String username) {
+        this.page++;
+        return getFriendRequestsOnPage(this.page, username);
     }
 }

@@ -1,45 +1,29 @@
 package socialnetwork.model;
 
+import socialnetwork.utils.Constants;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-public class EventDTO extends Entity<Long> {
-    private Long id;
-    private String name;
-    private LocalDateTime date;
+public class EventDTO extends Event {
+    private String beginDate;
     private Long nr_days_remaining;
+    private String information;
 
-    public EventDTO(Long id, String name, LocalDateTime date) {
-        this.id = id;
-        this.name = name;
-        this.date = date;
-        nr_days_remaining = ChronoUnit.DAYS.between(date, LocalDateTime.now());
+    public EventDTO(Event event) {
+        super(event.getName(), event.getDate(), event.getHost(), event.getLocation(), event.getDescription());
+        this.beginDate = event.getDate().format(Constants.DATE_TIME_FORMATTER);
+        nr_days_remaining = ChronoUnit.DAYS.between(LocalDateTime.now(), event.getDate());
+        this.information = this.toString();
+        this.setId(event.getId());
     }
 
-    @Override
-    public Long getId() {
-        return id;
+    public String getBeginDate() {
+        return beginDate;
     }
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setBeginDate(String beginDate) {
+        this.beginDate = beginDate;
     }
 
     public Long getNr_days_remaining() {
@@ -50,8 +34,16 @@ public class EventDTO extends Entity<Long> {
         this.nr_days_remaining = nr_days_remaining;
     }
 
+    public String getInformation() {
+        return information;
+    }
+
+    public void setInformation(String information) {
+        this.information = information;
+    }
+
     @Override
     public String toString() {
-        return "There are " + nr_days_remaining + " days left until the \"" + name + "\" event!";
+        return "There are " + nr_days_remaining + " days left until the \"" + getName() + "\" event!";
     }
 }

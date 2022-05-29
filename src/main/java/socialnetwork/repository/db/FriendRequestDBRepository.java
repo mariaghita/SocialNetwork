@@ -2,6 +2,9 @@ package socialnetwork.repository.db;
 
 import socialnetwork.model.FriendRequest;
 import socialnetwork.model.Tuple;
+import socialnetwork.repository.paging.Page;
+import socialnetwork.repository.paging.PageImplementation;
+import socialnetwork.repository.paging.Pageable;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -128,7 +131,7 @@ public class FriendRequestDBRepository extends AbstractFriendDBRepository<Tuple<
      * @param query the query we want to execute
      * @return the friend requests if they exist, null otherwise
      */
-    private Iterable<FriendRequest> findMore(String query){
+    private Set<FriendRequest> findMore(String query){
         Set<FriendRequest> friendRequests = new HashSet<>();
 
         try (Connection connection = DriverManager.getConnection(url, this.username, password);
@@ -148,7 +151,26 @@ public class FriendRequestDBRepository extends AbstractFriendDBRepository<Tuple<
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return friendRequests;
 
+    }
+
+    @Override
+    public Page<FriendRequest> findAll(Pageable pageable) {
+        String sql = "SELECT * FROM friendrequests ORDER BY date LIMIT " + pageable.getPageSize() + " OFFSET " + pageable.getPageSize() * pageable.getPageNumber();
+
+        return new PageImplementation<>(pageable, findMore(sql).stream());
+    }
+
+    public Page<FriendRequest> findAllFrom(Pageable pageable, String userName) {
+        String sql = "SELECT * FROM friendrequests WHERE \"from\" = '" + userName + "' ORDER BY date LIMIT " + pageable.getPageSize() + " OFFSET " + pageable.getPageSize() * pageable.getPageNumber();
+
+        return new PageImplementation<>(pageable, findMore(sql).stream());
+    }
+
+    public Page<FriendRequest> findAllTo(Pageable pageable, String userName) {
+        String sql = "SELECT * FROM friendrequests WHERE \"to\" = '" + userName + "' ORDER BY date LIMIT " + pageable.getPageSize() + " OFFSET " + pageable.getPageSize() * pageable.getPageNumber();
+
+        return new PageImplementation<>(pageable, findMore(sql).stream());
     }
 }

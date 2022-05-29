@@ -4,10 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import socialnetwork.model.UserDTO;
 import socialnetwork.repository.db.FriendshipDBRepository;
@@ -48,17 +46,40 @@ public class FriendsController extends UserController implements Observer<Friend
     private Button buttonRemoveFriend;
 
     @FXML
+    private Pagination paginationFriends;
+
+    @FXML
+    private Label status;
+
+    @FXML
     public void initialize() {
         tableColumnUsername.setCellValueFactory(new PropertyValueFactory<>("userName"));
         tableColumnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         tableColumnLastName.setCellValueFactory(new PropertyValueFactory<>("LastName"));
         tableColumnDateOfFriendship.setCellValueFactory(new PropertyValueFactory<>("dateOfFriendship"));
+        paginationFriends.setPageFactory(this::createPage);
         tableViewFriends.setItems(model);
     }
 
+    /*
     private void initModel() {
         List<UserDTO> friendList = friendshipService.getFriendList(currentUsername);
         model.setAll(friendList);
+    }
+    */
+
+
+    private Node createPage(Integer page) {
+        int fromIndex = page * 5;
+        int toIndex = Math.min(fromIndex + 5, model.size());
+        tableViewFriends.setItems(FXCollections.observableArrayList(initModel(page)));
+        return tableViewFriends;
+    }
+
+    private List<UserDTO> initModel(int page) {
+        List<UserDTO> UserDTOS = friendshipService.getFriendshipsOnPage(page, currentUsername);
+        model.setAll(UserDTOS);
+        return UserDTOS;
     }
 
     public void setServices(){
@@ -69,26 +90,28 @@ public class FriendsController extends UserController implements Observer<Friend
         this.friendshipService= new FriendshipService(userDBRepository, friendshipDBRepository);
 
         friendshipService.addObserver(this);
-        initModel();
+        paginationFriends.setPageFactory(this::createPage);
+        //initModel();
     }
 
     public void doRemoveFriend(ActionEvent event) {
+        String message = "";
         UserDTO selected = tableViewFriends.getSelectionModel().getSelectedItem();
         if (selected != null) {
             try {
                 friendshipService.removeFriendship(currentUsername, selected.getUserName());
-                String message = "You are no longer friends with " + selected.getFullName() + "!";
-                MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Delete", message);
+                message = "You are no longer friends with " + selected.getFullName() + "!";
             } catch (Exception e) {
-                MessageAlert.showErrorMessage(null, e.getMessage());
+                message = e.getMessage();
             }
         } else
-            MessageAlert.showErrorMessage(null, "You didn't select any user that you want to unfriend!");
-
+            message = "You didn't select any user that you want to unfriend!";
+        status.setText(message);
     }
 
     @Override
     public void update(FriendshipEvent friendshipEvent) {
-        initModel();
+        paginationFriends.setPageFactory(this::createPage);
+        //initModel();
     }
 }

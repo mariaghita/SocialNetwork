@@ -12,7 +12,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="750.0" style="-fx-background-color: #facb35;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.LoginController">
    <left>
-      <AnchorPane prefHeight="503.0" prefWidth="375.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="500.0" prefWidth="290.0" BorderPane.alignment="CENTER">
          <children>
             <ImageView fitHeight="494.0" fitWidth="330.0" layoutX="23.0" layoutY="13.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -23,21 +23,21 @@
       </AnchorPane>
    </left>
    <right>
-      <AnchorPane prefHeight="600.0" prefWidth="472.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="500.0" prefWidth="286.0" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="userName" layoutX="80.0" layoutY="200.0" prefHeight="34.0" prefWidth="214.0" promptText="username" />
-            <PasswordField fx:id="passWord" layoutX="79.0" layoutY="289.0" prefHeight="34.0" prefWidth="214.0" promptText="password" />
-            <Label layoutX="148.0" layoutY="162.0" prefHeight="38.0" prefWidth="76.0" text="Username">
+            <TextField fx:id="userName" layoutX="96.0" layoutY="200.0" prefHeight="34.0" prefWidth="214.0" promptText="username" stylesheets="@../css/textfields.css" />
+            <PasswordField fx:id="passWord" layoutX="96.0" layoutY="289.0" prefHeight="34.0" prefWidth="214.0" promptText="password" stylesheets="@../css/textfields.css" />
+            <Label layoutX="165.0" layoutY="163.0" prefHeight="38.0" prefWidth="76.0" text="Username">
                <font>
                   <Font name="Script MT Bold" size="18.0" />
                </font>
             </Label>
-            <Label layoutX="148.0" layoutY="250.0" prefHeight="39.0" prefWidth="78.0" text="Password">
+            <Label layoutX="164.0" layoutY="250.0" prefHeight="39.0" prefWidth="78.0" text="Password">
                <font>
                   <Font name="Script MT Bold" size="18.0" />
                </font>
             </Label>
-            <Button fx:id="login_button" layoutX="114.0" layoutY="348.0" mnemonicParsing="false" onAction="#userLogin" prefHeight="42.0" prefWidth="143.0" style="-fx-background-color: #facb35;">
+            <Button fx:id="login_button" layoutX="115.0" layoutY="344.0" mnemonicParsing="false" onAction="#userLogin" prefHeight="42.0" prefWidth="143.0" style="-fx-background-color: #facb35;">
                <graphic>
                   <ImageView fitHeight="43.0" fitWidth="99.0">
                      <image>
@@ -45,15 +45,16 @@
                      </image>
                   </ImageView>
                </graphic></Button>
-            <Label fx:id="wrong_login" alignment="CENTER" contentDisplay="CENTER" layoutX="77.0" layoutY="137.0" prefHeight="26.0" prefWidth="219.0" textAlignment="CENTER">
+            <Label fx:id="wrong_login" alignment="CENTER" contentDisplay="CENTER" layoutX="94.0" layoutY="137.0" prefHeight="26.0" prefWidth="219.0" textAlignment="CENTER">
                <font>
                   <Font name="Script MT Bold" size="16.0" />
                </font></Label>
-            <Label layoutX="41.0" layoutY="64.0" prefHeight="82.0" prefWidth="293.0" text="Welcome to SunLit!">
+            <Label layoutX="63.0" layoutY="68.0" prefHeight="82.0" prefWidth="293.0" text="Welcome to SunLit!">
                <font>
                   <Font name="Script MT Bold" size="36.0" />
                </font>
             </Label>
+            <Button fx:id="exit" layoutX="356.0" layoutY="-1.0" mnemonicParsing="false" onAction="#exitApp" prefHeight="26.0" prefWidth="50.0" stylesheets="@../css/exit.css" />
          </children>
       </AnchorPane>
    </right>

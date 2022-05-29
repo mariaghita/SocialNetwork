@@ -8,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public abstract class AbstractFriendDBRepository<ID, E extends Entity<ID>> extends AbstractDBRepository<ID,E> {
+public abstract class AbstractFriendDBRepository<ID, E extends Entity<ID>> extends AbstractPageDBRepository<ID,E> {
     public AbstractFriendDBRepository(String url, String username, String password) {
         super(url, username, password);
     }

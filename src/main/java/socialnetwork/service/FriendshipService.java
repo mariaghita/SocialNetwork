@@ -3,6 +3,9 @@ package socialnetwork.service;
 import socialnetwork.model.*;
 import socialnetwork.model.validators.*;
 import socialnetwork.repository.db.*;
+import socialnetwork.repository.paging.Page;
+import socialnetwork.repository.paging.Pageable;
+import socialnetwork.repository.paging.PageableImplementation;
 import socialnetwork.utils.events.FriendshipEventType;
 import socialnetwork.utils.events.FriendshipEvent;
 import socialnetwork.utils.observer.Observable;
@@ -24,6 +27,9 @@ public class FriendshipService implements Observable<FriendshipEvent> {
         this.userDBRepository = userDBRepository;
         this.friendshipDBRepository = friendshipDBRepository;
     }
+
+    private int page = 0;
+    private int size = 5;
 
     /**
      *adds a friendship between 2 existing users
@@ -164,6 +170,10 @@ public class FriendshipService implements Observable<FriendshipEvent> {
         return friendshipDBRepository.findOne(testFriendship);
     }
 
+    public Iterable<Friendship>getAll() {
+        return friendshipDBRepository.findAll();
+    }
+
     public List<UserDTO> findFriendsCreatedByDate(LocalDateTime startDate, LocalDateTime endDate, String loggedUser){
         List<UserDTO> friends = getFriendList(loggedUser);
         List<UserDTO> result = new ArrayList<UserDTO>();
@@ -172,10 +182,6 @@ public class FriendshipService implements Observable<FriendshipEvent> {
                 result.add(userDTO);
         });
         return result;
-    }
-
-    public Iterable<Friendship>getAll() {
-        return friendshipDBRepository.findAll();
     }
 
     private List<Observer<FriendshipEvent>> observers = new ArrayList<>();
@@ -193,5 +199,34 @@ public class FriendshipService implements Observable<FriendshipEvent> {
     @Override
     public void notifyObservers(FriendshipEvent e) {
         observers.forEach(x -> x.update(e));
+    }
+
+    //TODO metode de paginare
+
+    public int getPage() {
+        return page;
+    }
+
+    public List<UserDTO>getFriendshipsOnPage(int page, String username) {
+        this.page = page;
+        Pageable pageable = new PageableImplementation(page,this.size);
+        Page<Friendship> friendsPage = friendshipDBRepository.findAllOfUser(pageable, username);
+
+        List<UserDTO> result1 = StreamSupport.stream(friendshipDBRepository.findAllOfUser(pageable, username).getContent().spliterator(), false)
+                .filter(e -> Objects.equals(e.getId().getFirst(), username))
+                .map(e -> new UserDTO(e.getId().getSecond(), userDBRepository.findOne(e.getId().getSecond()).getFirstName(), userDBRepository.findOne(e.getId().getSecond()).getLastName(), e.getDate()))
+                .collect(Collectors.toList());
+
+        List<UserDTO> result2 = StreamSupport.stream(friendsPage.getContent().spliterator(), false)
+                .filter(e -> Objects.equals(e.getId().getSecond(), username))
+                .map(e -> new UserDTO(e.getId().getFirst(), userDBRepository.findOne(e.getId().getFirst()).getFirstName(), userDBRepository.findOne(e.getId().getFirst()).getLastName(), e.getDate()))
+                .collect(Collectors.toList());
+
+        return Stream.concat(result1.stream(), result2.stream()).collect(Collectors.toList());
+    }
+
+    public List<UserDTO> getNextPageFriendships(String username) {
+        this.page++;
+        return getFriendshipsOnPage(this.page, username);
     }
 }

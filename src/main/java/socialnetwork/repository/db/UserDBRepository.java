@@ -4,8 +4,11 @@ import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 import socialnetwork.model.*;
+import socialnetwork.repository.paging.Page;
+import socialnetwork.repository.paging.PageImplementation;
+import socialnetwork.repository.paging.Pageable;
 
-public class UserDBRepository extends AbstractDBRepository<String, User> {
+public class UserDBRepository extends AbstractPageDBRepository<String, User> {
     public UserDBRepository(String url, String username, String password) {
         super(url, username, password);
     }
@@ -47,27 +50,9 @@ public class UserDBRepository extends AbstractDBRepository<String, User> {
      */
     @Override
     public Iterable<User> findAll() {
-        Set<User> users = new HashSet<>();
+        String sql = "SELECT * FROM users";
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM users");
-             ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                String username = resultSet.getString("username");
-                String firstName = resultSet.getString("firstName");
-                String lastName = resultSet.getString("lastName");
-                String passWord = resultSet.getString("password");
-
-                User user = new User(firstName, lastName, passWord);
-                user.setId(username);
-                users.add(user);
-            }
-            return users;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return users;
+        return findMore(sql);
     }
 
     /**
@@ -135,5 +120,49 @@ public class UserDBRepository extends AbstractDBRepository<String, User> {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        String sql = "SELECT * FROM users ORDER BY username LIMIT " + pageable.getPageSize() + " OFFSET " + pageable.getPageSize() * pageable.getPageNumber();
+
+        return new PageImplementation<>(pageable, findMore(sql).stream());
+    }
+
+    public Page<User> findAllExceptCurrent(Pageable pageable, String Username) {
+        String sql = "SELECT * FROM users where username NOT LIKE '" + Username + "' ORDER BY username LIMIT " + pageable.getPageSize() + " OFFSET " + pageable.getPageSize() * pageable.getPageNumber();
+
+        return new PageImplementation<>(pageable, findMore(sql).stream());
+    }
+
+    public Page<User> findAllExceptCurrentWithString(Pageable pageable, String Username, String str) {
+        String sql = "SELECT * FROM users WHERE username NOT LIKE '" + Username +"' AND (LOWER(CONCAT_WS(' ', \"firstName\", \"lastName\")) LIKE '%" + str.toLowerCase() + "%' OR LOWER(CONCAT_WS(' ', \"lastName\", \"firstName\")) LIKE '%" + str.toLowerCase() + "%') ORDER BY username LIMIT " + pageable.getPageSize() + " OFFSET " + pageable.getPageSize() * pageable.getPageNumber();
+
+        return new PageImplementation<>(pageable, findMore(sql).stream());
+    }
+
+    private Set<User> findMore(String sql) {
+        Set<User> users = new HashSet<>();
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String username = resultSet.getString("username");
+                String firstName = resultSet.getString("firstName");
+                String lastName = resultSet.getString("lastName");
+                String passWord = resultSet.getString("password");
+
+                User user = new User(firstName, lastName, passWord);
+                user.setId(username);
+                users.add(user);
+            }
+            return users;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+
     }
 }

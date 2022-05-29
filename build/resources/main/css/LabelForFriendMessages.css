@@ -1,0 +1,12 @@
+.label{
+    -fx-border-width: 2;
+    -fx-border-radius: 50px;
+    -fx-border-color: #ffe485;
+    -fx-background-color:#ffd345;
+    -fx-background-radius: 50px;
+    -fx-opacity: 0.8;
+    -fx-text-fill: black;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+
+}

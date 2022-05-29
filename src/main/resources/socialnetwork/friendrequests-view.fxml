@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
@@ -77,49 +78,57 @@
          </children>
       </AnchorPane>
    </left>
+
    <top>
       <AnchorPane prefHeight="58.0" prefWidth="750.0" style="-fx-background-color: #ffd345;" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="32.0" fitWidth="176.0" layoutX="53.0" layoutY="21.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="28.0" fitWidth="116.0" layoutX="52.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/document_2.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="77.0" fitWidth="50.0" layoutX="14.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="59.0" fitWidth="51.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/sunlit1.png" />
                </image>
             </ImageView>
-            <Button fx:id="manageNotifications" layoutX="532.0" layoutY="-1.0" mnemonicParsing="false" onAction="#switchManageNotifications" prefHeight="72.0" prefWidth="218.0" style="-fx-background-color: #ffd345;">
+            <Button fx:id="manageNotifications" layoutX="579.0" layoutY="26.0" mnemonicParsing="false" onAction="#switchManageNotifications" prefHeight="46.0" prefWidth="167.0" style="-fx-background-color: #ffd345;">
                <graphic>
-                  <ImageView fitHeight="48.0" fitWidth="201.0">
+                  <ImageView fitHeight="35.0" fitWidth="153.0">
                      <image>
                         <Image url="@../images/notifications.png" />
                      </image>
                   </ImageView>
                </graphic></Button>
+            <Button fx:id="exit" layoutX="701.0" layoutY="-1.0" mnemonicParsing="false" onAction="#exitApp" prefHeight="26.0" prefWidth="50.0" stylesheets="@../css/exit.css" />
          </children>
       </AnchorPane>
    </top>
    <right>
-      <AnchorPane prefHeight="427.0" prefWidth="563.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="427.0" prefWidth="563.0" stylesheets="@../css/buttons.css" BorderPane.alignment="CENTER">
          <children>
             <ImageView fitHeight="427.0" fitWidth="564.0" layoutY="1.0">
                <image>
                   <Image url="@../images/bg3.png" />
                </image>
             </ImageView>
-            <TableView fx:id="friendRequestTableView" prefHeight="382.0" prefWidth="564.0">
+            <Pagination fx:id="paginationFriendRequests" layoutX="82.0" layoutY="97.0" maxPageIndicatorCount="3" prefHeight="257.0" prefWidth="400.0" stylesheets="@../css/pagination.css" />
+            <TableView fx:id="friendRequestTableView" layoutX="83.0" layoutY="99.0" prefHeight="184.0" prefWidth="400.0" stylesheets="@../css/tableviews.css">
               <columns>
-                <TableColumn fx:id="tableColumnFirstName" prefWidth="125.60003662109375" text="First Name" />
-                <TableColumn fx:id="tableColumnLastName" prefWidth="156.0" text="Last Name" />
-                  <TableColumn fx:id="tableColumnStatus" prefWidth="130.39996337890625" text="Status" />
-                  <TableColumn fx:id="tableColumnDate" prefWidth="154.4000244140625" text="Date of request" />
+                <TableColumn fx:id="tableColumnFirstName" prefWidth="102.39997100830078" text="First Name" />
+                <TableColumn fx:id="tableColumnLastName" prefWidth="98.4000244140625" text="Last Name" />
+                  <TableColumn fx:id="tableColumnStatus" prefWidth="93.5999755859375" text="Status" />
+                  <TableColumn fx:id="tableColumnDate" prefWidth="103.20001831054685" text="On" />
               </columns>
             </TableView>
-            <Button layoutX="265.0" layoutY="392.0" mnemonicParsing="false" onAction="#acceptFriendRequest" prefHeight="29.0" prefWidth="140.0" text="Accept Friend Request" />
-            <Button layoutX="414.0" layoutY="391.0" mnemonicParsing="false" onAction="#declineFriendRequest" prefHeight="30.0" prefWidth="144.0" text="Decline Friend Request" />
-            <Button layoutX="8.0" layoutY="392.0" mnemonicParsing="false" onAction="#switchManageSentFriendRequests" prefHeight="30.0" prefWidth="132.0" text="Sent Friend Requests" />
+            <Button layoutX="350.0" layoutY="390.0" mnemonicParsing="false" onAction="#acceptFriendRequest" prefHeight="36.0" prefWidth="102.0" text="Accept" />
+            <Button layoutX="453.0" layoutY="388.0" mnemonicParsing="false" onAction="#declineFriendRequest" prefHeight="38.0" prefWidth="110.0" text="Decline" />
+            <Button layoutX="7.0" layoutY="388.0" mnemonicParsing="false" onAction="#switchManageSentFriendRequests" prefHeight="38.0" prefWidth="188.0" text="Sent Friend Requests" />
+            <Label fx:id="status" alignment="CENTER" contentDisplay="CENTER" layoutX="112.0" layoutY="66.0" prefHeight="18.0" prefWidth="339.0" textAlignment="CENTER">
+               <font>
+                  <Font name="Script MT Bold" size="12.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </right>

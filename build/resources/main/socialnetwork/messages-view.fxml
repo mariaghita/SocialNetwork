@@ -84,24 +84,25 @@
    <top>
       <AnchorPane prefHeight="58.0" prefWidth="750.0" style="-fx-background-color: #ffd345;" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="32.0" fitWidth="176.0" layoutX="53.0" layoutY="21.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="28.0" fitWidth="116.0" layoutX="52.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/document_2.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="77.0" fitWidth="50.0" layoutX="14.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="59.0" fitWidth="51.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/sunlit1.png" />
                </image>
             </ImageView>
-            <Button fx:id="manageNotifications" layoutX="532.0" layoutY="-1.0" mnemonicParsing="false" onAction="#switchManageNotifications" prefHeight="72.0" prefWidth="218.0" style="-fx-background-color: #ffd345;">
+            <Button fx:id="manageNotifications" layoutX="579.0" layoutY="26.0" mnemonicParsing="false" onAction="#switchManageNotifications" prefHeight="46.0" prefWidth="167.0" style="-fx-background-color: #ffd345;">
                <graphic>
-                  <ImageView fitHeight="48.0" fitWidth="201.0">
+                  <ImageView fitHeight="35.0" fitWidth="153.0">
                      <image>
                         <Image url="@../images/notifications.png" />
                      </image>
                   </ImageView>
                </graphic></Button>
+            <Button fx:id="exit" layoutX="701.0" layoutY="-1.0" mnemonicParsing="false" onAction="#exitApp" prefHeight="26.0" prefWidth="50.0" stylesheets="@../css/exit.css" />
          </children>
       </AnchorPane>
    </top>
@@ -116,6 +117,7 @@
                </image>
             </ImageView>
             <Label fx:id="noChatSelected" layoutX="292.0" layoutY="177.0" prefHeight="61.0" prefWidth="191.0" text="It's quiet.." />
+            <TextField fx:id="searchBar2" layoutY="-1.0" prefHeight="29.0" prefWidth="177.0" promptText="Search..." visible="false" />
             <TableView fx:id="groupsTableView" layoutX="-1.0" layoutY="35.0" prefHeight="363.0" prefWidth="177.0">
                <columns>
                   <TableColumn fx:id="tableGroupColumnName" minWidth="0.0" prefWidth="176.0" resizable="false" text="Name" />
@@ -148,7 +150,6 @@
             </TableView>
             <Button fx:id="createGroupButton" layoutX="74.0" layoutY="400.0" mnemonicParsing="false" onAction="#switchCreateGroupButton" text="+" />
             <Button fx:id="createButton" layoutX="479.0" layoutY="400.0" mnemonicParsing="false" onAction="#createNewGroup" prefHeight="25.0" prefWidth="70.0" text="Create" />
-            <TextField fx:id="searchBar2" layoutY="-1.0" prefHeight="29.0" prefWidth="177.0" promptText="Search..." visible="false" />
          </children>
       </AnchorPane>
    </center>
